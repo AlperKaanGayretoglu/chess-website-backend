@@ -21,13 +21,10 @@ import java.util.Collections;
 @NoArgsConstructor
 public class User extends BaseEntity implements UserDetails {
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
 
-    @Column(name = "surname")
-    private String surname;
-
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "password_hash", nullable = false)
@@ -52,7 +49,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

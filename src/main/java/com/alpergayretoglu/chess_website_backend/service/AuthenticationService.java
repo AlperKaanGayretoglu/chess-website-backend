@@ -30,9 +30,12 @@ public class AuthenticationService {
             throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
         }
 
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+        }
+
         User user = User.builder()
-                .name(registerRequest.getName())
-                .surname(registerRequest.getSurname())
+                .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
                 .passwordHash(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();

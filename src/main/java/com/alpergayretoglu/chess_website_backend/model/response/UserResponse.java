@@ -11,15 +11,13 @@ import lombok.*;
 @NoArgsConstructor
 public class UserResponse extends BaseResponse {
 
-    private String name;
-    private String surname;
+    private String username;
     private String email;
     private UserRole userRole;
 
     public static UserResponse fromEntity(User user) {
         UserResponse response = UserResponse.builder()
-                .name(user.getName())
-                .surname(user.getSurname())
+                .username(user.getUsername())
                 .email(user.getEmail())
                 .userRole(user.getUserRole())
                 .build();

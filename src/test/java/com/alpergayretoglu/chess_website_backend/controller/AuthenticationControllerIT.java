@@ -146,8 +146,7 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
     // ---------------------------------------- GENERATE REQUESTS ----------------------------------------
     private RegisterRequest generateRegisterRequest() {
         return RegisterRequest.builder()
-                .name("New Registered User Name")
-                .surname("New Registered User Surname")
+                .username("new_registered_user_username")
                 .email("new_registered_user@mail.com")
                 .password("12345")
                 .build();
@@ -162,8 +161,7 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
 
     // ---------------------------------------- ASSERTIONS ----------------------------------------
     private void assert_RegisterRequest_matches_UserEntity(RegisterRequest registerRequest, User user) {
-        assertEquals(registerRequest.getName(), user.getName());
-        assertEquals(registerRequest.getSurname(), user.getSurname());
+        assertEquals(registerRequest.getUsername(), user.getUsername());
         assertEquals(registerRequest.getEmail(), user.getEmail());
         assertTrue(passwordEncoder.matches(registerRequest.getPassword(), user.getPassword()));
     }
