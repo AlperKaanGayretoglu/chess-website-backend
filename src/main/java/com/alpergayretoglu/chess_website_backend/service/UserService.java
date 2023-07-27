@@ -51,12 +51,24 @@ public class UserService {
             throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
         }
 
+        if (userRepository.existsByUsername(createUserRequest.getUsername())) {
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+        }
+
         User newUser = userRepository.save(CreateUserRequest.toEntity(createUserRequest));
         return UserResponse.fromEntity(newUser);
     }
 
     public UserResponse updateUser(Optional<User> authenticatedUserOptional, String userId, UpdateUserRequest updateUserRequest) {
         securityService.assertAdminOrSelf(authenticatedUserOptional, userId);
+
+        if (userRepository.existsByEmail(updateUserRequest.getEmail())) {
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+        }
+
+        if (userRepository.existsByUsername(updateUserRequest.getUsername())) {
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+        }
 
         User oldUser = userRepository.findById(userId).orElseThrow(
                 () -> new BusinessException(ErrorCode.USER_NOT_FOUND)

@@ -91,7 +91,7 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         LoginResponse loginResponse = response.getBody();
         assertNotNull(loginResponse);
 
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElse(null);
+        User user = userRepository.findByUsername(loginRequest.getUsername()).orElse(null);
         assertNotNull(user);
 
         assert_LoginRequest_matches_UserEntity(loginRequest, user);
@@ -99,10 +99,10 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void given_LoginRequest_and_nonexistent_email_when_login_then_USER_NOT_FOUND() {
+    public void given_LoginRequest_and_nonexistent_username_when_login_then_USER_NOT_FOUND() {
         // Given
         LoginRequest loginRequest = generateLoginRequest();
-        loginRequest.setEmail("nonexistent@mail.com");
+        loginRequest.setUsername("NONEXISTENT_USERNAME");
 
         // When
         final ResponseEntity<ErrorDTO> response = sendRequest(
@@ -146,8 +146,7 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
     // ---------------------------------------- GENERATE REQUESTS ----------------------------------------
     private RegisterRequest generateRegisterRequest() {
         return RegisterRequest.builder()
-                .name("New Registered User Name")
-                .surname("New Registered User Surname")
+                .username("new_registered_user_username")
                 .email("new_registered_user@mail.com")
                 .password("12345")
                 .build();
@@ -155,21 +154,20 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
 
     private LoginRequest generateLoginRequest() {
         return LoginRequest.builder()
-                .email("test_guest_exists@mail.com")
+                .username("TEST_GUEST_EXISTS")
                 .password("12345")
                 .build();
     }
 
     // ---------------------------------------- ASSERTIONS ----------------------------------------
     private void assert_RegisterRequest_matches_UserEntity(RegisterRequest registerRequest, User user) {
-        assertEquals(registerRequest.getName(), user.getName());
-        assertEquals(registerRequest.getSurname(), user.getSurname());
+        assertEquals(registerRequest.getUsername(), user.getUsername());
         assertEquals(registerRequest.getEmail(), user.getEmail());
         assertTrue(passwordEncoder.matches(registerRequest.getPassword(), user.getPassword()));
     }
 
     private void assert_LoginRequest_matches_UserEntity(LoginRequest loginRequest, User user) {
-        assertEquals(loginRequest.getEmail(), user.getEmail());
+        assertEquals(loginRequest.getUsername(), user.getUsername());
         assertTrue(passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()));
     }
 

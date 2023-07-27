@@ -3,6 +3,7 @@ package com.alpergayretoglu.chess_website_backend.controller;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.LoginRequest;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.RegisterRequest;
 import com.alpergayretoglu.chess_website_backend.model.response.LoginResponse;
+import com.alpergayretoglu.chess_website_backend.model.response.UserResponse;
 import com.alpergayretoglu.chess_website_backend.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;

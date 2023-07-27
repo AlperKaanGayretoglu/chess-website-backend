@@ -6,6 +6,7 @@ import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.LoginRequest;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.RegisterRequest;
 import com.alpergayretoglu.chess_website_backend.model.response.LoginResponse;
+import com.alpergayretoglu.chess_website_backend.model.response.UserResponse;
 import com.alpergayretoglu.chess_website_backend.repository.UserRepository;
 import com.alpergayretoglu.chess_website_backend.security.JwtService;
 import lombok.AllArgsConstructor;
@@ -30,9 +31,12 @@ public class AuthenticationService {
             throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
         }
 
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+        }
+
         User user = User.builder()
-                .name(registerRequest.getName())
-                .surname(registerRequest.getSurname())
+                .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
                 .passwordHash(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
@@ -40,9 +44,8 @@ public class AuthenticationService {
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(
-                () -> new BusinessException(ErrorCode.USER_NOT_FOUND)
-        );
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
             throw new BusinessException(ErrorCode.PASSWORD_MISMATCH);

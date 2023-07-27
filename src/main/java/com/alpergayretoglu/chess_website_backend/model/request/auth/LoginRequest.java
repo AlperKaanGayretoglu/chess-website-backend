@@ -16,9 +16,8 @@ import javax.validation.constraints.Size;
 @Builder
 public class LoginRequest {
 
-    @Email
     @NotBlank
-    private String email;
+    private String username;
 
     @Size(min = ApplicationConstants.PASSWORD_MIN_LENGTH, max = ApplicationConstants.PASSWORD_MAX_LENGTH)
     private String password;

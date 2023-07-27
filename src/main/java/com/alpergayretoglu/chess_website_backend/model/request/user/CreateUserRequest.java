@@ -17,11 +17,8 @@ import javax.validation.constraints.Size;
 public class CreateUserRequest {
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    @NotBlank(message = "Name cannot be empty!")
-    private String name;
-
-    @NotBlank(message = "Surname cannot be empty!")
-    private String surname;
+    @NotBlank(message = "Username cannot be empty!")
+    private String username;
 
     @Email(message = "Invalid email address!")
     @NotBlank(message = "Mail address cannot be empty!")
@@ -33,8 +30,7 @@ public class CreateUserRequest {
 
     public static User toEntity(CreateUserRequest request) {
         return User.builder()
-                .name(request.getName())
-                .surname(request.getSurname())
+                .username(request.getUsername())
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .userRole(UserRole.GUEST)

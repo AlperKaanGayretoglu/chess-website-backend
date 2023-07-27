@@ -10,15 +10,15 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class UpdateUserRequest {
 
-    @NotBlank(message = "Name cannot be empty!")
-    private String name;
+    @NotBlank(message = "Username cannot be empty!")
+    private String username;
 
-    @NotBlank(message = "Surname cannot be empty!")
-    private String surname;
+    @NotBlank(message = "Email cannot be empty!")
+    private String email;
 
     public static User toEntity(User user, UpdateUserRequest request) {
-        user.setName(request.getName());
-        user.setSurname(request.getSurname());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
         return user;
     }
 

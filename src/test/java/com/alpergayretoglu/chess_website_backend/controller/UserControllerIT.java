@@ -310,8 +310,7 @@ public class UserControllerIT extends BaseIntegrationTest {
     // ---------------------------------------- GENERATE REQUESTS ----------------------------------------
     private CreateUserRequest generateCreateUserRequest() {
         return CreateUserRequest.builder()
-                .name("Name Guest")
-                .surname("Surname Guest")
+                .username("Username Guest")
                 .email("guest_created@mail.com")
                 .password("12345")
                 .build();
@@ -319,8 +318,8 @@ public class UserControllerIT extends BaseIntegrationTest {
 
     private UpdateUserRequest generateUpdateUserRequest() {
         return UpdateUserRequest.builder()
-                .name("Name Guest Updated")
-                .surname("Surname Guest Updated")
+                .username("Username Guest Updated")
+                .email("guest_email_updated")
                 .build();
     }
 
@@ -333,21 +332,18 @@ public class UserControllerIT extends BaseIntegrationTest {
 
     // ---------------------------------------- ASSERTIONS ----------------------------------------
     private void assert_CreateUserRequest_matches_UserEntity(CreateUserRequest createUserRequest, User user) {
-        assertEquals(createUserRequest.getName(), user.getName());
-        assertEquals(createUserRequest.getSurname(), user.getSurname());
+        assertEquals(createUserRequest.getUsername(), user.getUsername());
         assertEquals(createUserRequest.getEmail(), user.getEmail());
         assertTrue(passwordEncoder.matches(createUserRequest.getPassword(), user.getPassword()));
     }
 
     private void assert_UpdateUserRequest_matches_UserEntity(UpdateUserRequest updateUserRequest, User user) {
-        assertEquals(updateUserRequest.getName(), user.getName());
-        assertEquals(updateUserRequest.getSurname(), user.getSurname());
+        assertEquals(updateUserRequest.getUsername(), user.getUsername());
     }
 
     private void assert_UserEntity_matches_UserResponse(User user, UserResponse userResponse) {
         assertEquals(user.getId(), userResponse.getId());
-        assertEquals(user.getName(), userResponse.getName());
-        assertEquals(user.getSurname(), userResponse.getSurname());
+        assertEquals(user.getUsername(), userResponse.getUsername());
         assertEquals(user.getEmail(), userResponse.getEmail());
         assertEquals(user.getUserRole(), userResponse.getUserRole());
     }
