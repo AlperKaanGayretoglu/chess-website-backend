@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: chess_website
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        hbm2ddl:
+          import_files_sql_extractor: org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor
+  datasource:
+    initialization-mode: always
+    platform: 'postgres'
+    username: sa
+    password: sa
+    url: jdbc:tc:postgresql:11.1:///db
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+swagger:
+  enabled: false
+  host: localhost:8080
+  path:
+
+security:
+  jwtSecret: ${JWT_SECRET}
+  issuer: ${JWT_ISSUER}
+  expiration:
+    hours: ${JWT_EXPIRATION_HOURS}
+
+cors:
+  allowed:
+    origins: ${CORS_ALLOWED_ORIGINS}
