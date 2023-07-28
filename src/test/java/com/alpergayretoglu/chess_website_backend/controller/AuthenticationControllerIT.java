@@ -5,7 +5,7 @@ import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorDTO;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.LoginRequest;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.RegisterRequest;
-import com.alpergayretoglu.chess_website_backend.model.response.LoginResponse;
+import com.alpergayretoglu.chess_website_backend.model.response.AuthenticationResponse;
 import com.alpergayretoglu.chess_website_backend.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +32,25 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         RegisterRequest registerRequest = generateRegisterRequest();
 
         // When
-        final ResponseEntity<Void> response = sendRequest(
+        final ResponseEntity<AuthenticationResponse> response = sendRequest(
                 "/auth/register",
                 HttpMethod.POST,
                 registerRequest,
-                new ParameterizedTypeReference<Void>() {
+                new ParameterizedTypeReference<AuthenticationResponse>() {
                 }
         );
 
         // Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
+        AuthenticationResponse authenticationResponse = response.getBody();
+        assertNotNull(authenticationResponse);
+
         User user = userRepository.findByEmail(registerRequest.getEmail()).orElse(null);
         assertNotNull(user);
 
         assert_RegisterRequest_matches_UserEntity(registerRequest, user);
+        assert_UserEntity_matches_AuthenticationResponse(user, authenticationResponse);
     }
 
     @Test
@@ -65,6 +69,8 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         );
 
         // Then
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+
         ErrorDTO errorDTO = response.getBody();
         assertNotNull(errorDTO);
 
@@ -77,25 +83,25 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         LoginRequest loginRequest = generateLoginRequest();
 
         // When
-        final ResponseEntity<LoginResponse> response = sendRequest(
+        final ResponseEntity<AuthenticationResponse> response = sendRequest(
                 "/auth/login",
                 HttpMethod.POST,
                 loginRequest,
-                new ParameterizedTypeReference<LoginResponse>() {
+                new ParameterizedTypeReference<AuthenticationResponse>() {
                 }
         );
 
         // Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        LoginResponse loginResponse = response.getBody();
-        assertNotNull(loginResponse);
+        AuthenticationResponse authenticationResponse = response.getBody();
+        assertNotNull(authenticationResponse);
 
         User user = userRepository.findByUsername(loginRequest.getUsername()).orElse(null);
         assertNotNull(user);
 
         assert_LoginRequest_matches_UserEntity(loginRequest, user);
-        assert_UserEntity_matches_LoginResponse(user, loginResponse);
+        assert_UserEntity_matches_AuthenticationResponse(user, authenticationResponse);
     }
 
     @Test
@@ -114,6 +120,8 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         );
 
         // Then
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
         ErrorDTO errorDTO = response.getBody();
         assertNotNull(errorDTO);
 
@@ -136,6 +144,8 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         );
 
         // Then
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+
         ErrorDTO errorDTO = response.getBody();
         assertNotNull(errorDTO);
 
@@ -171,9 +181,9 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         assertTrue(passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()));
     }
 
-    private void assert_UserEntity_matches_LoginResponse(User user, LoginResponse loginResponse) {
-        assertEquals(user.getId(), loginResponse.getId());
-        assertEquals(user.getUserRole(), loginResponse.getUserRole());
+    private void assert_UserEntity_matches_AuthenticationResponse(User user, AuthenticationResponse authenticationResponse) {
+        assertEquals(user.getId(), authenticationResponse.getId());
+        assertEquals(user.getUserRole(), authenticationResponse.getUserRole());
     }
 
 }

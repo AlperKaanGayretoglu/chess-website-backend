@@ -2,8 +2,7 @@ package com.alpergayretoglu.chess_website_backend.controller;
 
 import com.alpergayretoglu.chess_website_backend.model.request.auth.LoginRequest;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.RegisterRequest;
-import com.alpergayretoglu.chess_website_backend.model.response.LoginResponse;
-import com.alpergayretoglu.chess_website_backend.model.response.UserResponse;
+import com.alpergayretoglu.chess_website_backend.model.response.AuthenticationResponse;
 import com.alpergayretoglu.chess_website_backend.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -21,12 +20,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public void register(@Valid @RequestBody RegisterRequest registerRequest) {
-        authenticationService.register(registerRequest);
+    public AuthenticationResponse register(@Valid @RequestBody RegisterRequest registerRequest) {
+        return authenticationService.register(registerRequest);
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
+    public AuthenticationResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         return authenticationService.login(loginRequest);
     }
 

@@ -5,8 +5,7 @@ import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.LoginRequest;
 import com.alpergayretoglu.chess_website_backend.model.request.auth.RegisterRequest;
-import com.alpergayretoglu.chess_website_backend.model.response.LoginResponse;
-import com.alpergayretoglu.chess_website_backend.model.response.UserResponse;
+import com.alpergayretoglu.chess_website_backend.model.response.AuthenticationResponse;
 import com.alpergayretoglu.chess_website_backend.repository.UserRepository;
 import com.alpergayretoglu.chess_website_backend.security.JwtService;
 import lombok.AllArgsConstructor;
@@ -26,7 +25,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    public void register(RegisterRequest registerRequest) {
+    public AuthenticationResponse register(RegisterRequest registerRequest) {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
         }
@@ -41,9 +40,15 @@ public class AuthenticationService {
                 .passwordHash(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
         userRepository.save(user);
+
+        return AuthenticationResponse.builder()
+                .id(user.getId())
+                .token(jwtService.createToken(user.getId()))
+                .userRole(user.getUserRole())
+                .build();
     }
 
-    public LoginResponse login(LoginRequest loginRequest) {
+    public AuthenticationResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -51,7 +56,7 @@ public class AuthenticationService {
             throw new BusinessException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        return LoginResponse.builder()
+        return AuthenticationResponse.builder()
                 .id(user.getId())
                 .token(jwtService.createToken(user.getId()))
                 .userRole(user.getUserRole())

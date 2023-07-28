@@ -3,7 +3,6 @@ package com.alpergayretoglu.chess_website_backend.controller;
 import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorDTO;
-import com.alpergayretoglu.chess_website_backend.util.DateUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
         ErrorDTO error = new ErrorDTO(ex.getErrorCode());
         HttpStatus status = error.getStatus();
-        return new ResponseEntity<>(error, status != null ? status : HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(error, status != null ? error.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
@@ -52,11 +51,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        ErrorDTO error = ErrorDTO.builder()
-                .timestamp(DateUtil.now())
-                .status(ErrorCode.VALIDATION.getHttpStatus())
-                .message(String.join(", ", errors))
-                .build();
+        ErrorDTO error = new ErrorDTO(new ErrorCode(HttpStatus.UNPROCESSABLE_ENTITY, String.join(", ", errors)));
         return new ResponseEntity<>(error, headers, status);
     }
 
@@ -68,14 +63,8 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.toList());
 
-        ErrorDTO error = ErrorDTO.builder()
-                .timestamp(DateUtil.now())
-                .status(ErrorCode.VALIDATION.getHttpStatus())
-                .message(String.join(", ", errors))
-                .build();
-
-        HttpStatus status = error.getStatus();
-        return new ResponseEntity<>(error, status != null ? status : HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorDTO error = new ErrorDTO(new ErrorCode(HttpStatus.UNPROCESSABLE_ENTITY, String.join(", ", errors)));
+        return new ResponseEntity<>(error, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override
@@ -87,18 +76,15 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     ) {
         LOGGER.info("handleMissingServletRequestPart: {}", ex.getMessage());
 
-        ErrorDTO error = ErrorDTO.builder()
-                .timestamp(DateUtil.now())
-                .status(status)
-                .message(ex.getRequestPartName() + " is missing!")
-                .build();
+        ErrorDTO error = new ErrorDTO(new ErrorCode(status, ex.getRequestPartName() + " is missing!"));
         return new ResponseEntity<>(error, headers, status);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception e) {
+    public ResponseEntity<ErrorDTO> handleException(Exception e) {
         LOGGER.info("Exception: {}", e.getMessage());
 
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorDTO error = new ErrorDTO(new ErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

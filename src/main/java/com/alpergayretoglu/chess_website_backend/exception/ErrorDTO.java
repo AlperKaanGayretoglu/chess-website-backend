@@ -2,17 +2,13 @@ package com.alpergayretoglu.chess_website_backend.exception;
 
 import com.alpergayretoglu.chess_website_backend.util.DateUtil;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import java.time.ZonedDateTime;
 
-@AllArgsConstructor
 @Getter
-@Setter
-@Builder
+@AllArgsConstructor
 public class ErrorDTO {
 
     private final ZonedDateTime timestamp;
@@ -21,20 +17,12 @@ public class ErrorDTO {
 
     public ErrorDTO(ErrorCode errorCode) {
         this.timestamp = DateUtil.now();
-        this.status = errorCode.getHttpStatus();
         this.message = errorCode.getMessage();
+        this.status = errorCode.getHttpStatus();
     }
 
     public ErrorCode getErrorCode() {
-        return new ErrorCode(status, message);
-    }
-
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public String getMessage() {
-        return message;
+        return new ErrorCode(this.status, this.message);
     }
 
 }
