@@ -8,7 +8,6 @@ public class ErrorCode {
     public static ErrorCode UNKNOWN = new ErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, "Unknown error");
     public static ErrorCode VALIDATION = new ErrorCode(HttpStatus.UNPROCESSABLE_ENTITY, "Validation failed");
 
-
     public static ErrorCode AUTHENTICATED_USER_NOT_FOUND = new ErrorCode(HttpStatus.FORBIDDEN, "Authenticated user not found");
     public static ErrorCode USER_IS_NOT_ADMIN = new ErrorCode(HttpStatus.FORBIDDEN, "User is not admin");
     public static ErrorCode USER_IS_NOT_SELF = new ErrorCode(HttpStatus.FORBIDDEN, "User is not self");
@@ -18,7 +17,7 @@ public class ErrorCode {
     public static ErrorCode ACCOUNT_ALREADY_EXISTS = new ErrorCode(HttpStatus.CONFLICT, "Account already exists");
 
     public static ErrorCode USER_NOT_FOUND = new ErrorCode(HttpStatus.NOT_FOUND, "User not found");
-
+    public static ErrorCode CHAT_NOT_FOUND = new ErrorCode(HttpStatus.NOT_FOUND, "Chat not found");
 
     private final HttpStatus httpStatus;
     private final String message;
