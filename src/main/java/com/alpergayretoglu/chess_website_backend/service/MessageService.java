@@ -22,7 +22,7 @@ public class MessageService {
     private final MessageChatRepository messageChatRepository;
     private final MessageRepository messageRepository;
 
-    public MessageResponse send(MessageRequest messageRequest) {
+    public MessageResponse send(MessageRequest messageRequest, String chatId) {
         // TODO: Temporarily permits all but should be changed to authenticated (meaning apply the authentication service and authenticatedUser optional)
         // User user = securityService.assertSelf(authenticatedUserOptional, messageRequest.getFromUserId());
 
@@ -30,7 +30,7 @@ public class MessageService {
                 () -> new BusinessException(ErrorCode.USER_NOT_FOUND)
         );
 
-        Chat chat = messageChatRepository.findById(messageRequest.getChatId()).orElseThrow(
+        Chat chat = messageChatRepository.findById(chatId).orElseThrow(
                 () -> new BusinessException(ErrorCode.CHAT_NOT_FOUND)
         );
 
