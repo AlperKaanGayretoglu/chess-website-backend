@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/chatting")
+@RequestMapping("/chat")
 @CrossOrigin
 public class ChatController {
 
