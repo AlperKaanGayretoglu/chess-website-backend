@@ -14,6 +14,10 @@ public class ErrorCode {
     public static final ErrorCode USER_IS_NOT_ADMIN_OR_SELF = new ErrorCode(HttpStatus.FORBIDDEN, "User is not admin or self");
     public static final ErrorCode PASSWORD_MISMATCH = new ErrorCode(HttpStatus.FORBIDDEN, "Password mismatch");
 
+    public static final ErrorCode CREATE_CHAT_WITHOUT_SELF = new ErrorCode(HttpStatus.FORBIDDEN, "You can't create a chat that you are not a part of");
+    public static final ErrorCode GET_MESSAGES_WITHOUT_ACCESS = new ErrorCode(HttpStatus.FORBIDDEN, "You can't get messages from a chat that you are not a part of");
+    public static final ErrorCode USER_NOT_IN_CHAT = new ErrorCode(HttpStatus.FORBIDDEN, "You can't send a message to a chat that you are not a part of");
+
 
     public static final ErrorCode ACCOUNT_ALREADY_EXISTS = new ErrorCode(HttpStatus.CONFLICT, "Account already exists");
 

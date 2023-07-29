@@ -313,8 +313,6 @@ public class UserControllerIT extends BaseIntegrationTest {
         ErrorDTO errorDTO = response.getBody();
         assertNotNull(errorDTO);
 
-        System.out.println(errorDTO);
-
         assertEquals(ErrorCode.PASSWORD_MISMATCH, errorDTO.getErrorCode());
     }
 

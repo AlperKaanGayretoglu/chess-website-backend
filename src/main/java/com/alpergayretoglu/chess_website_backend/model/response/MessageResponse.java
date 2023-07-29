@@ -10,13 +10,13 @@ import lombok.Data;
 @Builder
 public class MessageResponse {
 
-    private String fromUserId;
+    private String username;
     private String text;
     private String time;
 
     public static MessageResponse fromEntity(Message message) {
         return MessageResponse.builder()
-                .fromUserId(message.getFrom().getId())
+                .username(message.getFrom().getUsername())
                 .text(message.getText())
                 .time(message.getCreated().toString())
                 .build();
