@@ -47,9 +47,9 @@ public class ChatService {
 
         List<User> users = new ArrayList<>();
 
-        for (String userId : createMessageChatRequest.getUserIds()) {
-            users.add(userRepository.findById(userId).orElseThrow(
-                    () -> new BusinessException(new ErrorCode(HttpStatus.NOT_FOUND, "User not found with id: " + userId))));
+        for (String username : createMessageChatRequest.getUsernames()) {
+            users.add(userRepository.findByUsername(username).orElseThrow(
+                    () -> new BusinessException(new ErrorCode(HttpStatus.NOT_FOUND, "User not found with username: " + username))));
         }
 
         if (user.getUserRole() != UserRole.ADMIN && !users.contains(user)) {

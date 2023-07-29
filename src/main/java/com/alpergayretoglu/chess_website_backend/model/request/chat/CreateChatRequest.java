@@ -13,6 +13,6 @@ import java.util.List;
 @Builder
 public class CreateChatRequest {
 
-    private List<String> userIds;
+    private List<String> usernames;
 
 }
