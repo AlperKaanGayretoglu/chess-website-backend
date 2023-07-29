@@ -20,6 +20,11 @@ public class ChatController {
     private final AuthenticationService authenticationService;
     private final ChatService chatService;
 
+    @GetMapping("/{chatId}")
+    public ChatResponse getChat(@PathVariable String chatId) {
+        return chatService.getChat(authenticationService.getAuthenticatedUser(), chatId);
+    }
+
     @GetMapping("/{chatId}/messages")
     public List<MessageResponse> getMessages(@PathVariable String chatId) {
         return chatService.getMessages(authenticationService.getAuthenticatedUser(), chatId);

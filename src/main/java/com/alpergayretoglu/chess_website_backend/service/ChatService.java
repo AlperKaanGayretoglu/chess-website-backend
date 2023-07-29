@@ -28,6 +28,15 @@ public class ChatService {
 
     private final MessageChatRepository messageChatRepository;
 
+    public ChatResponse getChat(Optional<User> authenticatedUser, String chatId) {
+        User user = securityService.assertUser(authenticatedUser);
+
+        Chat chat = messageChatRepository.findById(chatId).orElseThrow(
+                () -> new BusinessException(new ErrorCode(HttpStatus.NOT_FOUND, "Chat not found with id: " + chatId)));
+
+        return ChatResponse.fromEntity(chat);
+    }
+
     public List<MessageResponse> getMessages(Optional<User> authenticatedUser, String chatId) {
         User user = securityService.assertUser(authenticatedUser);
 
