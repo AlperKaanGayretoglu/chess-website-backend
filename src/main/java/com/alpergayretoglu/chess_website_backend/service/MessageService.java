@@ -27,15 +27,15 @@ public class MessageService {
         // User user = securityService.assertSelf(authenticatedUserOptional, messageRequest.getFromUserId());
 
         User user = userRepository.findById(messageRequest.getFromUserId()).orElseThrow(
-                () -> new BusinessException(ErrorCode.USER_NOT_FOUND)
+                () -> new BusinessException(ErrorCode.USER_NOT_FOUND())
         );
 
         Chat chat = messageChatRepository.findById(chatId).orElseThrow(
-                () -> new BusinessException(ErrorCode.CHAT_NOT_FOUND)
+                () -> new BusinessException(ErrorCode.CHAT_NOT_FOUND())
         );
 
         if (!chat.getUsers().contains(user)) {
-            throw new BusinessException(ErrorCode.USER_NOT_IN_CHAT);
+            throw new BusinessException(ErrorCode.USER_NOT_IN_CHAT());
         }
 
         Message message = messageRepository.save(Message.builder()

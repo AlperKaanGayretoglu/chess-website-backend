@@ -25,11 +25,11 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS());
         }
 
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS());
         }
 
         User user = User.builder()
@@ -49,10 +49,10 @@ public class AuthenticationService {
 
     public AuthenticationResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND()));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
-            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH);
+            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH());
         }
 
         return AuthenticationResponse.builder()

@@ -37,7 +37,7 @@ public class UserService {
         securityService.assertUser(authenticatedUserOptional);
 
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new BusinessException(ErrorCode.USER_NOT_FOUND)
+                () -> new BusinessException(ErrorCode.USER_NOT_FOUND())
         );
         return UserResponse.fromEntity(user);
     }
@@ -46,11 +46,11 @@ public class UserService {
         securityService.assertAdmin(authenticatedUserOptional);
 
         if (userRepository.existsByEmail(createUserRequest.getEmail())) {
-            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS());
         }
 
         if (userRepository.existsByUsername(createUserRequest.getUsername())) {
-            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS());
         }
 
         User newUser = userRepository.save(CreateUserRequest.toEntity(createUserRequest));
@@ -61,15 +61,15 @@ public class UserService {
         securityService.assertAdminOrSelf(authenticatedUserOptional, userId);
 
         if (userRepository.existsByEmail(updateUserRequest.getEmail())) {
-            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS());
         }
 
         if (userRepository.existsByUsername(updateUserRequest.getUsername())) {
-            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS);
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_EXISTS());
         }
 
         User oldUser = userRepository.findById(userId).orElseThrow(
-                () -> new BusinessException(ErrorCode.USER_NOT_FOUND)
+                () -> new BusinessException(ErrorCode.USER_NOT_FOUND())
         );
         User newUser = userRepository.save(UpdateUserRequest.toEntity(oldUser, updateUserRequest));
         return UserResponse.fromEntity(newUser);
@@ -79,7 +79,7 @@ public class UserService {
         securityService.assertAdmin(authenticatedUserOptional);
 
         User oldUser = userRepository.findById(userId).orElseThrow(
-                () -> new BusinessException(ErrorCode.USER_NOT_FOUND)
+                () -> new BusinessException(ErrorCode.USER_NOT_FOUND())
         );
         userRepository.delete(oldUser);
         return UserResponse.fromEntity(oldUser);
@@ -89,7 +89,7 @@ public class UserService {
         User user = securityService.assertUser(authenticatedUser);
 
         if (!passwordEncoder.matches(resetPasswordRequest.getOldPassword(), user.getPasswordHash())) {
-            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH);
+            throw new BusinessException(ErrorCode.PASSWORD_MISMATCH());
         }
 
         user.setPasswordHash(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));

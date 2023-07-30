@@ -11,7 +11,6 @@ import com.alpergayretoglu.chess_website_backend.model.response.MessageResponse;
 import com.alpergayretoglu.chess_website_backend.repository.MessageChatRepository;
 import com.alpergayretoglu.chess_website_backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class ChatService {
         User user = securityService.assertUser(authenticatedUser);
 
         Chat chat = messageChatRepository.findById(chatId).orElseThrow(
-                () -> new BusinessException(new ErrorCode(HttpStatus.NOT_FOUND, "Chat not found with id: " + chatId)));
+                () -> new BusinessException(ErrorCode.CHAT_NOT_FOUND(chatId)));
 
         return ChatResponse.fromEntity(chat);
     }
@@ -41,11 +40,11 @@ public class ChatService {
         User user = securityService.assertUser(authenticatedUser);
 
         Chat chat = messageChatRepository.findById(chatId).orElseThrow(
-                () -> new BusinessException(new ErrorCode(HttpStatus.NOT_FOUND, "Chat not found with id: " + chatId)));
+                () -> new BusinessException(ErrorCode.CHAT_NOT_FOUND(chatId)));
 
         // TODO: Thinking from a chess game perspective, a spectator should be able to see the game but not play moves
         // if (!chat.getUsers().contains(user)) {
-        //     throw new BusinessException(ErrorCode.GET_MESSAGES_WITHOUT_ACCESS);
+        //     throw new BusinessException(ErrorCode.GET_MESSAGES_WITHOUT_ACCESS());
         // }
 
         return chat.getMessages().stream().map(MessageResponse::fromEntity).collect(Collectors.toList());
@@ -58,11 +57,11 @@ public class ChatService {
 
         for (String username : createMessageChatRequest.getUsernames()) {
             users.add(userRepository.findByUsername(username).orElseThrow(
-                    () -> new BusinessException(new ErrorCode(HttpStatus.NOT_FOUND, "User not found with username: " + username))));
+                    () -> new BusinessException(ErrorCode.USER_NOT_FOUND_WITH_USERNAME(username))));
         }
 
         if (user.getUserRole() != UserRole.ADMIN && !users.contains(user)) {
-            throw new BusinessException(ErrorCode.CREATE_CHAT_WITHOUT_SELF);
+            throw new BusinessException(ErrorCode.CREATE_CHAT_WITHOUT_SELF());
         }
 
         Chat chat = messageChatRepository.save(Chat.builder()

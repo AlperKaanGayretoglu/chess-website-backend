@@ -46,7 +46,7 @@ public class JwtService {
                         .getSubject();
 
                 if (StringUtils.isNotEmpty(subject)) {
-                    User user = userRepository.findById(subject).orElseThrow(() -> new BusinessException(ErrorCode.AUTHENTICATED_USER_NOT_FOUND));
+                    User user = userRepository.findById(subject).orElseThrow(() -> new BusinessException(ErrorCode.AUTHENTICATED_USER_NOT_FOUND()));
                     return new UsernamePasswordAuthenticationToken(subject, null, user.getAuthorities());
                 }
             } catch (ExpiredJwtException exception) {
