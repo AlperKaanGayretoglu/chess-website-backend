@@ -30,6 +30,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorDTO> customHandleBusinessException(BusinessException ex, WebRequest request) {
+        ex.printStackTrace();
         LOGGER.info("Business Error: {}", ex.getErrorCode().toString());
 
         ErrorDTO error = new ErrorDTO(ex.getErrorCode());
@@ -44,6 +45,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
             @NotNull HttpStatus status,
             @NotNull WebRequest request
     ) {
+        ex.printStackTrace();
         LOGGER.info("handleMethodArgumentNotValid: {}", ex.getMessage());
 
         List<String> errors = ex.getBindingResult()
@@ -58,6 +60,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorDTO> handleMethodArgumentNotValid(ConstraintViolationException ex, WebRequest request) {
+        ex.printStackTrace();
         LOGGER.info("handleMethodArgumentNotValid: {}", ex.getMessage());
 
         List<String> errors = ex.getConstraintViolations().stream()
@@ -75,6 +78,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
             @NotNull HttpStatus status,
             @NotNull WebRequest request
     ) {
+        ex.printStackTrace();
         LOGGER.info("handleMissingServletRequestPart: {}", ex.getMessage());
 
         ErrorDTO error = new ErrorDTO(new ErrorCode(status, ex.getRequestPartName() + " is missing!"));
@@ -83,10 +87,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @MessageExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDTO> handleException(Exception e) {
-        LOGGER.info("Exception: {}", e.getMessage());
+    public ResponseEntity<ErrorDTO> handleException(Exception ex) {
+        ex.printStackTrace();
+        LOGGER.info("Exception: {}", ex.getMessage());
 
-        ErrorDTO error = new ErrorDTO(new ErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        ErrorDTO error = new ErrorDTO(new ErrorCode(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
