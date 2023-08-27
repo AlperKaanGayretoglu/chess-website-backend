@@ -67,20 +67,6 @@ public class ChessGameLegalMoveService {
             row++;
         }
 
-        // TODO: Remove this temporary code
-        // ------------------------------------------------------ TEMPORARY ------------------------------------------------------
-        PlayedPieceMove playedPieceMove = new PlayedPieceMove(null, new ChessCoordinate(0, 0), new ChessCoordinate(0, 0));
-
-        ChessMove chessMove = ChessMove.builder()
-                .build();
-        chessMoveRepository.save(chessMove);
-
-        playedPieceMove.setPartOfChessMove(chessMove);
-        playedPieceMoveRepository.save(playedPieceMove);
-
-        legalMoves.add(chessMove);
-        // ------------------------------------------------------ TEMPORARY ------------------------------------------------------
-
         legalMoves.forEach(move -> {
             move.setChessGame(chessGame);
             chessMoveRepository.save(move);
