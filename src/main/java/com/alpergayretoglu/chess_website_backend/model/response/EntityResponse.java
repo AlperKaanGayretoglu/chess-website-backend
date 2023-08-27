@@ -10,13 +10,13 @@ import java.time.ZonedDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class BaseResponse {
+public abstract class EntityResponse {
 
     private String id;
     private ZonedDateTime created;
     private ZonedDateTime updated;
 
-    protected static <R extends BaseResponse, E extends BaseEntity> R setCommonValuesFromEntity(R response, E entity) {
+    protected static <R extends EntityResponse, E extends BaseEntity> R setCommonValuesFromEntity(R response, E entity) {
         response.setId(entity.getId());
         response.setCreated(entity.getCreated());
         response.setUpdated(entity.getUpdated());

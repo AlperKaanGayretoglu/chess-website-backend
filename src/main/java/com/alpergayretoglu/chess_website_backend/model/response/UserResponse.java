@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse extends BaseResponse {
+public class UserResponse extends EntityResponse {
 
     private String username;
     private String email;
