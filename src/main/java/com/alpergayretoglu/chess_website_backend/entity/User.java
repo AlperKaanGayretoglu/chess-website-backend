@@ -7,10 +7,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -36,10 +34,6 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserRole userRole = UserRole.GUEST;
-
-    @ManyToMany(mappedBy = "users")
-    @Builder.Default
-    private List<Chat> chats = new ArrayList<>();
 
 
     // SECURITY
