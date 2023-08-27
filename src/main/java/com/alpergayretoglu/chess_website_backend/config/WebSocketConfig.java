@@ -16,12 +16,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/secured/chat_messages");
+        config.enableSimpleBroker("/secured/moves");
         config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/secured/chatting").setAllowedOrigins(allowedOrigins).withSockJS();
+        registry.addEndpoint("/secured/gaming").setAllowedOrigins(allowedOrigins).withSockJS();
     }
 }
