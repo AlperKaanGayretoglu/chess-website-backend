@@ -1,12 +1,11 @@
 package com.alpergayretoglu.chess_website_backend.model.response;
 
-import com.alpergayretoglu.chess_website_backend.entity.User;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -16,11 +15,13 @@ public class ChatResponse {
     private String chatId;
     private List<String> userIds;
 
-    public static ChatResponse fromEntity(com.alpergayretoglu.chess_website_backend.entity.Chat chat) {
-        return ChatResponse.builder()
-                .chatId(chat.getId())
-                .userIds(chat.getUsers().stream().map(User::getId).collect(Collectors.toList()))
-                .build();
+    public static ChatResponse fromEntity(ChessGame chessGame) {
+        // TODO: fix
+        // return ChatResponse.builder()
+        //         .chatId(chessGame.getId())
+        //         .userIds(chessGame.getUsers().stream().map(User::getId).collect(Collectors.toList()))
+        //         .build();
+        return null;
     }
 
 }
