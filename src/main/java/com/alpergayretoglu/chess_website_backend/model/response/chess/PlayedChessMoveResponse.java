@@ -21,10 +21,6 @@ public class PlayedChessMoveResponse {
     private final String currentPlayerUsername;
     private final List<ChessMoveResponse> legalMovesForCurrentPlayer;
 
-    // TODO: Remove this later because it is not needed: (Remove it from frontend as well)
-    // TODO: Instead of this, make the frontend move the piece itself
-    private final ChessBoardResponse chessBoard;
-
     public static PlayedChessMoveResponse fromEntity(ChessMoveRepository chessMoveRepository, TriggeredPieceMoveRepository triggeredPieceMoveRepository, ChessGame game, ChessMove move) {
         return PlayedChessMoveResponse.builder()
                 .playedChessMove(ChessMoveResponse.fromEntity(triggeredPieceMoveRepository, move))
@@ -35,7 +31,6 @@ public class PlayedChessMoveResponse {
                                 .map(chessMove -> ChessMoveResponse.fromEntity(triggeredPieceMoveRepository, chessMove))
                                 .collect(Collectors.toList())
                 )
-                .chessBoard(ChessBoardResponse.fromEntity(game.getChessBoard()))
                 .build();
     }
 
