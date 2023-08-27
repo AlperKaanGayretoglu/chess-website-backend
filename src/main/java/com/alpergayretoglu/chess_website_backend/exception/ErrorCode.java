@@ -36,21 +36,21 @@ public class ErrorCode {
         return new ErrorCode(HttpStatus.FORBIDDEN, "Password mismatch");
     }
 
-    public static ErrorCode CREATE_CHAT_WITHOUT_SELF() {
-        return new ErrorCode(HttpStatus.FORBIDDEN, "You can't create a chat that you are not a part of");
-    }
-
-    public static ErrorCode GET_MESSAGES_WITHOUT_ACCESS() {
-        return new ErrorCode(HttpStatus.FORBIDDEN, "You can't get messages from a chat that you are not a part of");
-    }
-
-    public static ErrorCode USER_NOT_IN_CHAT() {
-        return new ErrorCode(HttpStatus.FORBIDDEN, "You can't send a message to a chat that you are not a part of");
-    }
-
     // ------------------------------------------------ CONFLICT ------------------------------------------------
     public static ErrorCode ACCOUNT_ALREADY_EXISTS() {
         return new ErrorCode(HttpStatus.CONFLICT, "Account already exists");
+    }
+
+    public static ErrorCode USER_CANNOT_START_GAME_NOT_PART_OF() {
+        return new ErrorCode(HttpStatus.CONFLICT, "You can't start a game that you are not a part of");
+    }
+
+    public static ErrorCode OPPONENTS_CANNOT_BE_SAME() {
+        return new ErrorCode(HttpStatus.CONFLICT, "Opponents cannot be the same");
+    }
+
+    public static ErrorCode ILLEGAL_MOVE() {
+        return new ErrorCode(HttpStatus.CONFLICT, "Illegal move");
     }
 
     // ------------------------------------------------ NOT FOUND ------------------------------------------------
@@ -64,14 +64,6 @@ public class ErrorCode {
 
     public static ErrorCode USER_NOT_FOUND_WITH_ID(String userId) {
         return new ErrorCode(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
-    }
-
-    public static ErrorCode CHAT_NOT_FOUND() {
-        return new ErrorCode(HttpStatus.NOT_FOUND, "Chat not found");
-    }
-
-    public static ErrorCode CHAT_NOT_FOUND(String chatId) {
-        return new ErrorCode(HttpStatus.NOT_FOUND, "Chat not found with id: " + chatId);
     }
 
 
