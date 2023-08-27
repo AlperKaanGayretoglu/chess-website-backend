@@ -1,9 +1,13 @@
 package com.alpergayretoglu.chess_website_backend.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 @ToString
+@Getter
+@AllArgsConstructor
 public class ErrorCode {
 
     // ------------------------------------------------ GLOBAL ------------------------------------------------
@@ -66,22 +70,16 @@ public class ErrorCode {
         return new ErrorCode(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
     }
 
+    public static ErrorCode GAME_NOT_FOUND_WITH_ID(String gameId) {
+        return new ErrorCode(HttpStatus.NOT_FOUND, "Game not found with id: " + gameId);
+    }
+
+    public static ErrorCode CHESS_MOVE_NOT_FOUND_WITH_ID(String chessMoveId) {
+        return new ErrorCode(HttpStatus.NOT_FOUND, "Chess move not found with id: " + chessMoveId);
+    }
 
     private final HttpStatus httpStatus;
     private final String message;
-
-    public ErrorCode(HttpStatus httpStatus, String message) {
-        this.httpStatus = httpStatus;
-        this.message = message;
-    }
-
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 
     @Override
     public boolean equals(Object obj) {
