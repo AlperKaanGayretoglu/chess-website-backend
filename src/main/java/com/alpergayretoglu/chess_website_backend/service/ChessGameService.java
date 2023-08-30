@@ -39,6 +39,8 @@ public class ChessGameService {
     private final ChessMoveRepository chessMoveRepository;
     private final TriggeredPieceMoveRepository triggeredPieceMoveRepository;
 
+    private final Random random = new Random();
+
     public ChessGameResponse getChessGame(Optional<User> authenticatedUser, String gameId) {
         securityService.assertUser(authenticatedUser);
 
@@ -68,7 +70,7 @@ public class ChessGameService {
         User secondPlayer = userRepository.findByUsername(secondPlayerUsername)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND_WITH_USERNAME(secondPlayerUsername)));
 
-        User playerWhite = (new Random()).nextBoolean() ? firstPlayer : secondPlayer;
+        User playerWhite = random.nextBoolean() ? firstPlayer : secondPlayer;
         User playerBlack = (playerWhite == firstPlayer) ? secondPlayer : firstPlayer;
 
         ChessBoard chessBoard = ChessBoard.initializePieces(new ChessBoard());
