@@ -16,6 +16,9 @@ public class PieceMoveResponse {
     private final ChessCoordinate to;
 
     public static PieceMoveResponse fromEntity(PieceMove pieceMove) {
+        if (pieceMove == null) {
+            return null;
+        }
         return PieceMoveResponse.builder()
                 .from(pieceMove.getFrom())
                 .to(pieceMove.getTo())
