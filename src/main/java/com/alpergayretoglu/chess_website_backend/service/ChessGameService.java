@@ -14,6 +14,7 @@ import com.alpergayretoglu.chess_website_backend.model.response.chess.ChessGameR
 import com.alpergayretoglu.chess_website_backend.model.response.chess.CreateChessGameResponse;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.*;
+import com.alpergayretoglu.chess_website_backend.service.mapper.ChessGameMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,8 @@ public class ChessGameService {
     private final ChessMoveRepository chessMoveRepository;
     private final TriggeredPieceMoveRepository triggeredPieceMoveRepository;
 
+    private final ChessGameMapper chessGameMapper;
+
     private final Random random = new Random();
 
     public ChessGameResponse getChessGame(Optional<User> authenticatedUser, String gameId) {
@@ -47,7 +50,7 @@ public class ChessGameService {
         ChessGame chessGame = chessGameRepository.findById(gameId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GAME_NOT_FOUND_WITH_ID(gameId)));
 
-        return ChessGameResponse.fromEntity(chessMoveRepository, triggeredPieceMoveRepository, chessGame);
+        return chessGameMapper.fromEntity(chessGame);
     }
 
     public CreateChessGameResponse createChessGame(Optional<User> authenticatedUserOptional, CreateChessGameRequest createChessGameRequest) {

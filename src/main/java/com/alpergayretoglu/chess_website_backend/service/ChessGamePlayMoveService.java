@@ -5,6 +5,7 @@ import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.*;
+import com.alpergayretoglu.chess_website_backend.service.mapper.PlayedChessMoveMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ public class ChessGamePlayMoveService {
 
     private final ChessMoveRepository chessMoveRepository;
     private final TriggeredPieceMoveRepository triggeredPieceMoveRepository;
+
+    private final PlayedChessMoveMapper playedChessMoveMapper;
 
     public PlayedChessMoveResponse playMove(ChessGame chessGame, ChessMove chessMove) {
         List<ChessMove> legalMovesForCurrentPlayer = chessMoveRepository.findAllByChessGame(chessGame);
@@ -47,6 +50,6 @@ public class ChessGamePlayMoveService {
         chessGameLegalMoveService.calculateLegalMovesForCurrentPlayer(chessGame);
 
         chessGameRepository.save(chessGame);
-        return PlayedChessMoveResponse.fromEntity(chessMoveRepository, triggeredPieceMoveRepository, chessGame, chessMove);
+        return playedChessMoveMapper.fromEntity(chessGame, chessMove);
     }
 }
