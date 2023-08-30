@@ -39,11 +39,12 @@ public class ChessGamePlayMoveService {
         chessBoard.playTriggeredMoves(triggeredPieceMoves);
         chessBoardRepository.save(chessBoard);
 
-        chessGameLegalMoveService.calculateLegalMovesForCurrentPlayer(chessGame);
-
         ChessGameState chessGameState = chessGame.getChessGameState();
         chessGameState.switchCurrentPlayer();
         chessGameStateRepository.save(chessGameState);
+        chessGameRepository.save(chessGame);
+
+        chessGameLegalMoveService.calculateLegalMovesForCurrentPlayer(chessGame);
 
         chessGameRepository.save(chessGame);
         return PlayedChessMoveResponse.fromEntity(chessMoveRepository, triggeredPieceMoveRepository, chessGame, chessMove);
