@@ -1,13 +1,15 @@
 package com.alpergayretoglu.chess_website_backend.entity.chess;
 
 import com.alpergayretoglu.chess_website_backend.entity.BaseEntity;
-import com.alpergayretoglu.chess_website_backend.entity.chess.chessPiece.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
+import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,13 +21,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class ChessBoard extends BaseEntity {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @MapKeyClass(ChessCoordinate.class)
-    @JoinTable(
-            name = "chess_board_pieces",
-            joinColumns = @JoinColumn(name = "chess_board_id")
-    )
-    // eager:
+    @ElementCollection(fetch = FetchType.EAGER)
     private final Map<ChessCoordinate, ChessPiece> chessPieces = new HashMap<>();
 
     public ChessPiece getChessPieceAt(ChessCoordinate chessCoordinate) {
