@@ -27,7 +27,10 @@ public class ChessGamePlayMoveService {
     private final PlayedChessMoveMapper playedChessMoveMapper;
 
     public PlayedChessMoveResponse playMove(ChessGame chessGame, ChessMove chessMove) {
+        final ChessBoardPiecesModifier chessBoardPiecesModifier = new ChessBoardPiecesModifier(chessGame.getChessBoard().getChessPieces());
+
         List<ChessMove> legalMovesForCurrentPlayer = chessMoveRepository.findAllByChessGame(chessGame);
+
         ChessBoard chessBoard = chessGame.getChessBoard();
 
         if (!legalMovesForCurrentPlayer.contains(chessMove)) {
@@ -35,11 +38,11 @@ public class ChessGamePlayMoveService {
         }
 
         PlayedPieceMove playedPieceMove = chessMove.getPlayedPieceMove();
-        chessBoard.playMove(playedPieceMove);
+        chessBoardPiecesModifier.playMove(playedPieceMove);
         chessBoardRepository.save(chessBoard);
 
         List<TriggeredPieceMove> triggeredPieceMoves = triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove);
-        chessBoard.playTriggeredMoves(triggeredPieceMoves);
+        chessBoardPiecesModifier.playTriggeredMoves(triggeredPieceMoves);
         chessBoardRepository.save(chessBoard);
 
         ChessGameState chessGameState = chessGame.getChessGameState();

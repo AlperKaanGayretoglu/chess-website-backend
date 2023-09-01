@@ -26,6 +26,8 @@ public class ChessGameLegalMoveService {
     private final ChessGameRepository chessGameRepository;
 
     public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame) {
+        final ChessBoardPiecesModifier chessBoardPiecesModifier = new ChessBoardPiecesModifier(chessGame.getChessBoard().getChessPieces());
+
         List<ChessMove> oldLegalMoves = chessMoveRepository.findAllByChessGame(chessGame);
 
         oldLegalMoves.forEach(chessMove -> {
@@ -51,10 +53,9 @@ public class ChessGameLegalMoveService {
         });
 
         List<ChessMove> legalMoves = new ArrayList<>();
-        ChessBoard chessBoard = chessGame.getChessBoard();
 
-        for (ChessCoordinate chessCoordinate : chessBoard.getCoordinatesOfPiecesWithColor(chessGame.getCurrentPlayerColor())) {
-            legalMoves.addAll(chessPieceLegalMoveService.calculateLegalMovesForPieceAtSquare(chessBoard, chessCoordinate));
+        for (ChessCoordinate chessCoordinate : chessBoardPiecesModifier.getCoordinatesOfPiecesWithColor(chessGame.getCurrentPlayerColor())) {
+            legalMoves.addAll(chessPieceLegalMoveService.calculateLegalMovesForPieceAtSquare(chessBoardPiecesModifier, chessCoordinate));
         }
 
         legalMoves.forEach(move -> {

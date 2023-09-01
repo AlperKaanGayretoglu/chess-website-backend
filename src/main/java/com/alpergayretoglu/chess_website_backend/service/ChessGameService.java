@@ -78,7 +78,12 @@ public class ChessGameService {
         User playerWhite = random.nextBoolean() ? firstPlayer : secondPlayer;
         User playerBlack = (playerWhite == firstPlayer) ? secondPlayer : firstPlayer;
 
-        ChessBoard chessBoard = chessBoardInitializer.initializePieces(ChessBoard.builder().build());
+
+        ChessBoard chessBoard = new ChessBoard();
+
+        final ChessBoardPiecesModifier chessBoardPiecesModifier = new ChessBoardPiecesModifier(chessBoard.getChessPieces());
+
+        chessBoardInitializer.initializePieces(chessBoardPiecesModifier);
         chessBoardRepository.save(chessBoard);
 
         ChessGameState chessGameState = ChessGameState.builder()

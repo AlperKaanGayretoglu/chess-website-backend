@@ -42,8 +42,8 @@ public class ChessPieceLegalMoveService {
     private final PlayedPieceMoveRepository playedPieceMoveRepository;
     private final TriggeredPieceMoveRepository triggeredPieceMoveRepository;
 
-    public List<ChessMove> calculateLegalMovesForPieceAtSquare(ChessBoard chessBoard, ChessCoordinate currentCoordinate) {
-        ChessPiece chessPiece = chessBoard.getChessPieceAt(currentCoordinate);
+    public List<ChessMove> calculateLegalMovesForPieceAtSquare(ChessBoardPiecesModifier chessBoardPiecesModifier, ChessCoordinate currentCoordinate) {
+        ChessPiece chessPiece = chessBoardPiecesModifier.getChessPieceAt(currentCoordinate);
         List<ChessMove> legalMoves = new ArrayList<>();
 
         if (chessPiece == null) {
@@ -64,12 +64,12 @@ public class ChessPieceLegalMoveService {
             playedPieceMove.setPartOfChessMove(chessMove);
             playedPieceMoveRepository.save(playedPieceMove);
 
-            if (chessBoard.getChessPieceAt(nextCoordinate) == null) {
+            if (chessBoardPiecesModifier.getChessPieceAt(nextCoordinate) == null) {
                 legalMoves.add(chessMove);
                 continue;
             }
 
-            if (chessBoard.getChessPieceAt(nextCoordinate).getChessColor() != chessPiece.getChessColor()) {
+            if (chessBoardPiecesModifier.getChessPieceAt(nextCoordinate).getChessColor() != chessPiece.getChessColor()) {
                 legalMoves.add(chessMove);
             }
 
