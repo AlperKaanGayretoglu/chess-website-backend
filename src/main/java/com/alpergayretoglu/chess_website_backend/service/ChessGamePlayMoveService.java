@@ -39,20 +39,17 @@ public class ChessGamePlayMoveService {
 
         PlayedPieceMove playedPieceMove = chessMove.getPlayedPieceMove();
         chessBoardPiecesModifier.playMove(playedPieceMove);
-        chessBoardRepository.save(chessBoard);
 
         List<TriggeredPieceMove> triggeredPieceMoves = triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove);
         chessBoardPiecesModifier.playTriggeredMoves(triggeredPieceMoves);
-        chessBoardRepository.save(chessBoard);
 
         ChessGameState chessGameState = chessGame.getChessGameState();
         chessGameState.switchCurrentPlayer();
+
+        chessBoardRepository.save(chessBoard);
         chessGameStateRepository.save(chessGameState);
-        chessGameRepository.save(chessGame);
 
         chessGameLegalMoveService.calculateAndSaveLegalMovesForCurrentPlayer(chessGame, chessBoardPiecesModifier);
-
-        chessGameRepository.save(chessGame);
         return playedChessMoveMapper.fromEntity(chessGame, chessMove);
     }
 }

@@ -1,12 +1,10 @@
 package com.alpergayretoglu.chess_website_backend.service;
 
-import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
-import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
-import com.alpergayretoglu.chess_website_backend.entity.chess.ChessMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.PlayedPieceMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.*;
 import com.alpergayretoglu.chess_website_backend.entity.chess.movePattern.MovePatternIterator;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPieceType;
+import com.alpergayretoglu.chess_website_backend.repository.ChessGameRepository;
 import com.alpergayretoglu.chess_website_backend.repository.ChessMoveRepository;
 import com.alpergayretoglu.chess_website_backend.repository.PlayedPieceMoveRepository;
 import com.alpergayretoglu.chess_website_backend.repository.TriggeredPieceMoveRepository;
@@ -42,40 +40,40 @@ public class ChessPieceLegalMoveService {
     private final PlayedPieceMoveRepository playedPieceMoveRepository;
     private final TriggeredPieceMoveRepository triggeredPieceMoveRepository;
 
-    public List<ChessMove> calculateLegalMovesForPieceAtSquare(ChessBoardPiecesModifier chessBoardPiecesModifier, ChessCoordinate currentCoordinate) {
+    private final ChessGameRepository chessGameRepository;
+
+    public void calculateAndSaveLegalMovesForPieceAtSquare(ChessBoardPiecesModifier chessBoardPiecesModifier, ChessGame chessGame, ChessCoordinate currentCoordinate) {
         ChessPiece chessPiece = chessBoardPiecesModifier.getChessPieceAt(currentCoordinate);
-        List<ChessMove> legalMoves = new ArrayList<>();
 
         if (chessPiece == null) {
-            return legalMoves;
+            return;
         }
+
+        List<ChessMove> legalMoves = new ArrayList<>();
+        List<PlayedPieceMove> playedPieceMoves = new ArrayList<>();
 
         MovePatternIterator movePatternIterator = chessPiece.getChessPieceType().getMovePattern().getIteratorStartingAt(currentCoordinate);
         while (movePatternIterator.hasNext()) {
             ChessCoordinate nextCoordinate = movePatternIterator.next();
 
-            PlayedPieceMove playedPieceMove = new PlayedPieceMove(null, currentCoordinate, nextCoordinate);
-            playedPieceMoveRepository.save(playedPieceMove);
+            ChessMove chessMove = ChessMove.builder().chessGame(chessGame).build();
 
-            ChessMove chessMove = ChessMove.builder()
-                    .build();
-            chessMoveRepository.save(chessMove);
-
-            playedPieceMove.setPartOfChessMove(chessMove);
-            playedPieceMoveRepository.save(playedPieceMove);
-
-            if (chessBoardPiecesModifier.getChessPieceAt(nextCoordinate) == null) {
+            if (
+                    chessBoardPiecesModifier.getChessPieceAt(nextCoordinate) == null ||
+                            chessBoardPiecesModifier.getChessPieceAt(nextCoordinate).getChessColor() != chessPiece.getChessColor()
+            ) {
                 legalMoves.add(chessMove);
-                continue;
-            }
 
-            if (chessBoardPiecesModifier.getChessPieceAt(nextCoordinate).getChessColor() != chessPiece.getChessColor()) {
-                legalMoves.add(chessMove);
+                PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, nextCoordinate);
+                playedPieceMoves.add(playedPieceMove);
             }
 
         }
 
-        return legalMoves;
+        chessMoveRepository.saveAll(legalMoves);
+        playedPieceMoveRepository.saveAll(playedPieceMoves);
+
+        chessGameRepository.save(chessGame);
     }
 
 }
