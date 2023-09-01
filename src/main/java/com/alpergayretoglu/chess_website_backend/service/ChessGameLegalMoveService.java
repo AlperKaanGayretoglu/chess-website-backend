@@ -1,6 +1,8 @@
 package com.alpergayretoglu.chess_website_backend.service;
 
-import com.alpergayretoglu.chess_website_backend.entity.chess.*;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessMove;
 import com.alpergayretoglu.chess_website_backend.repository.ChessGameRepository;
 import com.alpergayretoglu.chess_website_backend.repository.ChessMoveRepository;
 import com.alpergayretoglu.chess_website_backend.repository.PlayedPieceMoveRepository;
@@ -26,29 +28,7 @@ public class ChessGameLegalMoveService {
     private final ChessGameRepository chessGameRepository;
 
     public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame, ChessBoardPiecesModifier chessBoardPiecesModifier) {
-        List<ChessMove> oldLegalMoves = chessMoveRepository.findAllByChessGame(chessGame);
-
-        oldLegalMoves.forEach(chessMove -> {
-            PlayedPieceMove playedPieceMove = chessMove.getPlayedPieceMove();
-            playedPieceMove.setPartOfChessMove(null);
-            playedPieceMoveRepository.save(playedPieceMove);
-
-            List<TriggeredPieceMove> triggeredPieceMoves = triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove);
-            triggeredPieceMoves.forEach(pieceMove -> {
-                pieceMove.setPartOfChessMove(null);
-                triggeredPieceMoveRepository.save(pieceMove);
-            });
-
-            chessMove.setPlayedPieceMove(null);
-            triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove).clear();
-            chessMoveRepository.save(chessMove);
-
-            chessMove.setChessGame(null);
-            chessMoveRepository.delete(chessMove);
-
-            playedPieceMoveRepository.delete(playedPieceMove);
-            triggeredPieceMoveRepository.deleteAll(triggeredPieceMoves);
-        });
+        chessMoveRepository.deleteAllByChessGame(chessGame);
 
         List<ChessMove> legalMoves = new ArrayList<>();
 
