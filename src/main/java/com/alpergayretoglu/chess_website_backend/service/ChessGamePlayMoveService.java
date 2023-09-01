@@ -50,7 +50,7 @@ public class ChessGamePlayMoveService {
         chessGameStateRepository.save(chessGameState);
         chessGameRepository.save(chessGame);
 
-        chessGameLegalMoveService.calculateAndSaveLegalMovesForCurrentPlayer(chessGame);
+        chessGameLegalMoveService.calculateAndSaveLegalMovesForCurrentPlayer(chessGame, chessBoardPiecesModifier);
 
         chessGameRepository.save(chessGame);
         return playedChessMoveMapper.fromEntity(chessGame, chessMove);

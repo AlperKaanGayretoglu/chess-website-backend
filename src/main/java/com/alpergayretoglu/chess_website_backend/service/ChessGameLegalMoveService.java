@@ -25,9 +25,7 @@ public class ChessGameLegalMoveService {
 
     private final ChessGameRepository chessGameRepository;
 
-    public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame) {
-        final ChessBoardPiecesModifier chessBoardPiecesModifier = new ChessBoardPiecesModifier(chessGame.getChessBoard().getChessPieces());
-
+    public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame, ChessBoardPiecesModifier chessBoardPiecesModifier) {
         List<ChessMove> oldLegalMoves = chessMoveRepository.findAllByChessGame(chessGame);
 
         oldLegalMoves.forEach(chessMove -> {

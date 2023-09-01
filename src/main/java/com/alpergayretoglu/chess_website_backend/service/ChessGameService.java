@@ -98,7 +98,7 @@ public class ChessGameService {
                 .build();
         chessGameRepository.save(chessGame);
 
-        chessGameLegalMoveService.calculateAndSaveLegalMovesForCurrentPlayer(chessGame);
+        chessGameLegalMoveService.calculateAndSaveLegalMovesForCurrentPlayer(chessGame, chessBoardPiecesModifier);
         return CreateChessGameResponse.fromEntity(chessGame);
     }
 
