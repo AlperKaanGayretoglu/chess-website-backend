@@ -17,11 +17,11 @@ public class ChessGameLegalMoveService {
     private final ChessMoveRepository chessMoveRepository;
 
 
-    public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame, ChessBoardPiecesModifier chessBoardPiecesModifier) {
+    public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame, ChessBoardPiecesObserver chessBoardPiecesObserver) {
         chessMoveRepository.deleteAllByChessGame(chessGame);
 
-        for (ChessCoordinate chessCoordinate : chessBoardPiecesModifier.getCoordinatesOfPiecesWithColor(chessGame.getCurrentPlayerColor())) {
-            chessPieceLegalMoveService.calculateAndSaveLegalMovesForPieceAtSquare(chessBoardPiecesModifier, chessGame, chessCoordinate);
+        for (ChessCoordinate chessCoordinate : chessBoardPiecesObserver.getCoordinatesOfPiecesWithColor(chessGame.getCurrentPlayerColor())) {
+            chessPieceLegalMoveService.calculateAndSaveLegalMovesForPieceAtSquare(chessBoardPiecesObserver, chessGame, chessCoordinate);
         }
     }
 

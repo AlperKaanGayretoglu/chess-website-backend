@@ -5,23 +5,30 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.PlayedPieceMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.TriggeredPieceMove;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
-import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@RequiredArgsConstructor
 public class ChessBoardPiecesModifier {
 
     private final Map<ChessCoordinate, ChessPiece> chessPieces;
+    private final ChessBoardPiecesObserver chessBoardPiecesObserver;
 
-    public void clear() {
-        chessPieces.clear();
+    public ChessBoardPiecesModifier(Map<ChessCoordinate, ChessPiece> chessPieces) {
+        this.chessPieces = chessPieces;
+        this.chessBoardPiecesObserver = new ChessBoardPiecesObserver(chessPieces);
+    }
+
+    public ChessBoardPiecesObserver turnIntoObserver() {
+        return chessBoardPiecesObserver;
     }
 
     public ChessPiece getChessPieceAt(ChessCoordinate chessCoordinate) {
-        return chessPieces.get(chessCoordinate);
+        return chessBoardPiecesObserver.getChessPieceAt(chessCoordinate);
+    }
+
+    public List<ChessCoordinate> getCoordinatesOfPiecesWithColor(ChessColor chessColor) {
+        return chessBoardPiecesObserver.getCoordinatesOfPiecesWithColor(chessColor);
     }
 
     public ChessPiece removeChessPieceAt(ChessCoordinate chessCoordinate) {
@@ -44,16 +51,8 @@ public class ChessBoardPiecesModifier {
         });
     }
 
-    public List<ChessCoordinate> getCoordinatesOfPiecesWithColor(ChessColor chessColor) {
-        List<ChessCoordinate> chessCoordinates = new ArrayList<>();
-
-        for (Map.Entry<ChessCoordinate, ChessPiece> entry : chessPieces.entrySet()) {
-            if (entry.getValue().getChessColor() == chessColor) {
-                chessCoordinates.add(entry.getKey());
-            }
-        }
-
-        return chessCoordinates;
+    public void clear() {
+        chessPieces.clear();
     }
 
 }
