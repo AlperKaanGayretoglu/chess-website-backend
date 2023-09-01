@@ -42,6 +42,8 @@ public class ChessGameService {
 
     private final ChessGameMapper chessGameMapper;
 
+    private final ChessBoardInitializer chessBoardInitializer;
+
     private final Random random = new Random();
 
     public ChessGameResponse getChessGame(Optional<User> authenticatedUser, String gameId) {
@@ -76,7 +78,7 @@ public class ChessGameService {
         User playerWhite = random.nextBoolean() ? firstPlayer : secondPlayer;
         User playerBlack = (playerWhite == firstPlayer) ? secondPlayer : firstPlayer;
 
-        ChessBoard chessBoard = ChessBoard.initializePieces(new ChessBoard());
+        ChessBoard chessBoard = chessBoardInitializer.initializePieces(ChessBoard.builder().build());
         chessBoardRepository.save(chessBoard);
 
         ChessGameState chessGameState = ChessGameState.builder()

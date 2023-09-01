@@ -28,12 +28,12 @@ public abstract class BaseEntity implements Serializable {
     @Setter(AccessLevel.NONE)
     private String id;
 
-    @Column(name = "created", nullable = false, updatable = false)
+    @Column(name = "created")
     @CreatedDate
     @Setter(AccessLevel.NONE)
     private ZonedDateTime created;
 
-    @Column(name = "updated", nullable = false)
+    @Column(name = "updated")
     @LastModifiedDate
     @Setter(AccessLevel.NONE)
     private ZonedDateTime updated;

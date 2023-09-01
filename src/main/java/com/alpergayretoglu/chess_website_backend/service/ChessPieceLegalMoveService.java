@@ -50,7 +50,7 @@ public class ChessPieceLegalMoveService {
             return legalMoves;
         }
 
-        MovePatternIterator movePatternIterator = chessPiece.getMovePattern().getIteratorStartingAt(currentCoordinate);
+        MovePatternIterator movePatternIterator = chessPiece.getChessPieceType().getMovePattern().getIteratorStartingAt(currentCoordinate);
         while (movePatternIterator.hasNext()) {
             ChessCoordinate nextCoordinate = movePatternIterator.next();
 

@@ -1,69 +1,43 @@
 package com.alpergayretoglu.chess_website_backend.entity.chess;
 
 import com.alpergayretoglu.chess_website_backend.entity.BaseEntity;
-import com.alpergayretoglu.chess_website_backend.entity.chess.chessPiece.*;
+import com.alpergayretoglu.chess_website_backend.entity.chess.chessPiece.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Builder
 @Getter
+@NoArgsConstructor
 public class ChessBoard extends BaseEntity {
 
-    private final ChessSquare[][] board = new ChessSquare[8][8];
-
-    public ChessBoard() {
-        for (int row = 0; row < 8; row++) {
-            ChessColor chessColor = row % 2 == 0 ? ChessColor.WHITE : ChessColor.BLACK;
-
-            board[row] = new ChessSquare[8];
-            for (int column = 0; column < 8; column++) {
-                board[row][column] = new ChessSquare(chessColor);
-                chessColor = chessColor.getOppositeColor();
-            }
-        }
-    }
-
-    public static ChessBoard initializePieces(ChessBoard chessBoard) {
-        for (int column = 0; column < chessBoard.board[1].length; column++) {
-            chessBoard.board[1][column].setChessPiece(new Pawn(ChessColor.WHITE));
-            chessBoard.board[6][column].setChessPiece(new Pawn(ChessColor.BLACK));
-        }
-
-        chessBoard.board[0][0].setChessPiece(new Rook(ChessColor.WHITE));
-        chessBoard.board[0][1].setChessPiece(new Knight(ChessColor.WHITE));
-        chessBoard.board[0][2].setChessPiece(new Bishop(ChessColor.WHITE));
-        chessBoard.board[0][3].setChessPiece(new Queen(ChessColor.WHITE));
-        chessBoard.board[0][4].setChessPiece(new King(ChessColor.WHITE));
-        chessBoard.board[0][5].setChessPiece(new Bishop(ChessColor.WHITE));
-        chessBoard.board[0][6].setChessPiece(new Knight(ChessColor.WHITE));
-        chessBoard.board[0][7].setChessPiece(new Rook(ChessColor.WHITE));
-
-        chessBoard.board[7][0].setChessPiece(new Rook(ChessColor.BLACK));
-        chessBoard.board[7][1].setChessPiece(new Knight(ChessColor.BLACK));
-        chessBoard.board[7][2].setChessPiece(new Bishop(ChessColor.BLACK));
-        chessBoard.board[7][3].setChessPiece(new Queen(ChessColor.BLACK));
-        chessBoard.board[7][4].setChessPiece(new King(ChessColor.BLACK));
-        chessBoard.board[7][5].setChessPiece(new Bishop(ChessColor.BLACK));
-        chessBoard.board[7][6].setChessPiece(new Knight(ChessColor.BLACK));
-        chessBoard.board[7][7].setChessPiece(new Rook(ChessColor.BLACK));
-        return chessBoard;
-    }
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @MapKeyClass(ChessCoordinate.class)
+    @JoinTable(
+            name = "chess_board_pieces",
+            joinColumns = @JoinColumn(name = "chess_board_id")
+    )
+    // eager:
+    private final Map<ChessCoordinate, ChessPiece> chessPieces = new HashMap<>();
 
     public ChessPiece getChessPieceAt(ChessCoordinate chessCoordinate) {
-        return board[chessCoordinate.getRow()][chessCoordinate.getColumn()].getChessPiece();
+        return chessPieces.get(chessCoordinate);
     }
 
     public ChessPiece removeChessPieceAt(ChessCoordinate chessCoordinate) {
-        return board[chessCoordinate.getRow()][chessCoordinate.getColumn()].removeChessPiece();
+        return chessPieces.remove(chessCoordinate);
     }
 
     public void putChessPieceTo(ChessPiece chessPiece, ChessCoordinate chessCoordinate) {
-        board[chessCoordinate.getRow()][chessCoordinate.getColumn()].setChessPiece(chessPiece);
+        chessPieces.put(chessCoordinate, chessPiece);
     }
 
     public void playMove(PlayedPieceMove playedPieceMove) {
@@ -76,6 +50,18 @@ public class ChessBoard extends BaseEntity {
             ChessPiece chessPiece = removeChessPieceAt(triggeredPieceMove.getFrom());
             putChessPieceTo(chessPiece, triggeredPieceMove.getTo());
         });
+    }
+
+    public List<ChessCoordinate> getCoordinatesOfPiecesWithColor(ChessColor chessColor) {
+        List<ChessCoordinate> chessCoordinates = new ArrayList<>();
+
+        for (Map.Entry<ChessCoordinate, ChessPiece> entry : chessPieces.entrySet()) {
+            if (entry.getValue().getChessColor() == chessColor) {
+                chessCoordinates.add(entry.getKey());
+            }
+        }
+
+        return chessCoordinates;
     }
 
 }

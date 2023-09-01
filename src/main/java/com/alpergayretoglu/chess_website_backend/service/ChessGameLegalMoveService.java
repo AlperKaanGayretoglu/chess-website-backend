@@ -53,18 +53,8 @@ public class ChessGameLegalMoveService {
         List<ChessMove> legalMoves = new ArrayList<>();
         ChessBoard chessBoard = chessGame.getChessBoard();
 
-        int row = 0;
-        int column = 0;
-        for (ChessSquare[] chessSquares : chessBoard.getBoard()) {
-            column = 0;
-            for (ChessSquare chessSquare : chessSquares) {
-                if (!chessSquare.isEmpty() && chessSquare.getChessPiece().getChessColor() == chessGame.getCurrentPlayerColor()) {
-                    ChessCoordinate currentCoordinate = new ChessCoordinate(row, column);
-                    legalMoves.addAll(chessPieceLegalMoveService.calculateLegalMovesForPieceAtSquare(chessBoard, currentCoordinate));
-                }
-                column++;
-            }
-            row++;
+        for (ChessCoordinate chessCoordinate : chessBoard.getCoordinatesOfPiecesWithColor(chessGame.getCurrentPlayerColor())) {
+            legalMoves.addAll(chessPieceLegalMoveService.calculateLegalMovesForPieceAtSquare(chessBoard, chessCoordinate));
         }
 
         legalMoves.forEach(move -> {
