@@ -4,7 +4,7 @@ import com.alpergayretoglu.chess_website_backend.entity.User;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
-import com.alpergayretoglu.chess_website_backend.entity.chess.ChessMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.model.enums.UserRole;

@@ -1,7 +1,7 @@
 package com.alpergayretoglu.chess_website_backend.model.response.chess;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
-import com.alpergayretoglu.chess_website_backend.entity.chess.PieceMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceMove;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

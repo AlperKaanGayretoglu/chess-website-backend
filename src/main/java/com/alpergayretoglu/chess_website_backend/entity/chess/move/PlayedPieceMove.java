@@ -1,6 +1,7 @@
-package com.alpergayretoglu.chess_website_backend.entity.chess;
+package com.alpergayretoglu.chess_website_backend.entity.chess.move;
 
 import com.alpergayretoglu.chess_website_backend.entity.BaseEntity;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import lombok.*;
 
 import javax.persistence.*;

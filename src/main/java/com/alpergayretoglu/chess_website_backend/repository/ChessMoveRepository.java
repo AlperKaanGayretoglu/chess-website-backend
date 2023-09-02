@@ -1,7 +1,7 @@
 package com.alpergayretoglu.chess_website_backend.repository;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
-import com.alpergayretoglu.chess_website_backend.entity.chess.ChessMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

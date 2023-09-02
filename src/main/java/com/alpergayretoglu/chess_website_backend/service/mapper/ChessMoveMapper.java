@@ -1,6 +1,6 @@
 package com.alpergayretoglu.chess_website_backend.service.mapper;
 
-import com.alpergayretoglu.chess_website_backend.entity.chess.ChessMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.ChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PieceMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.TriggeredPieceMoveRepository;

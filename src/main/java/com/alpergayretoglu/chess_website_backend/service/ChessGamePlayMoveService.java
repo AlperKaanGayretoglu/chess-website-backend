@@ -1,6 +1,11 @@
 package com.alpergayretoglu.chess_website_backend.service;
 
-import com.alpergayretoglu.chess_website_backend.entity.chess.*;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
 import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;

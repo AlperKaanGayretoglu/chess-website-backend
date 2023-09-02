@@ -1,8 +1,8 @@
 package com.alpergayretoglu.chess_website_backend.service;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
-import com.alpergayretoglu.chess_website_backend.entity.chess.PlayedPieceMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.TriggeredPieceMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 
