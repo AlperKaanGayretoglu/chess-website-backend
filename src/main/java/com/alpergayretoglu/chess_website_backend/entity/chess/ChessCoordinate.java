@@ -9,6 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Size;
 
+/**
+ * USAGE: When you look from white POV, the top-left corner should be the (0,0) point.
+ */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

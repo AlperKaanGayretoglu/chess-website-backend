@@ -82,13 +82,13 @@ public class ChessPieceLegalMoveService {
         int twoStepsForwardRow;
 
         if (pawnColor == ChessColor.WHITE) {
-            isPawnAtStartingPosition = currentCoordinate.getRow() == 1;
-            oneStepForwardRow = currentCoordinate.getRow() + 1;
-            twoStepsForwardRow = currentCoordinate.getRow() + 2;
-        } else {
             isPawnAtStartingPosition = currentCoordinate.getRow() == 6;
             oneStepForwardRow = currentCoordinate.getRow() - 1;
             twoStepsForwardRow = currentCoordinate.getRow() - 2;
+        } else {
+            isPawnAtStartingPosition = currentCoordinate.getRow() == 1;
+            oneStepForwardRow = currentCoordinate.getRow() + 1;
+            twoStepsForwardRow = currentCoordinate.getRow() + 2;
         }
 
         boolean isFirstMoveRegistered = registerPawnMove(currentCoordinate, oneStepForwardRow, chessBoardPiecesObserver, chessMoveRegisterer);
