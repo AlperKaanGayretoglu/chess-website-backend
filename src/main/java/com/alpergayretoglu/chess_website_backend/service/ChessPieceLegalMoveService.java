@@ -4,8 +4,8 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.PlayedPieceMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.movePattern.MovePattern;
-import com.alpergayretoglu.chess_website_backend.entity.chess.movePattern.MovePatternIterator;
+import com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern;
+import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPieceType;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern.chessPieceBasicMovePatternMap;
 
 @Service
 @NoArgsConstructor
@@ -30,36 +32,15 @@ public class ChessPieceLegalMoveService {
     }
 
     private static final Map<ChessPieceType, ChessPieceLegalMoveCalculator> chessPieceLegalMoveCalculatorMap;
-    private static final Map<ChessPieceType, MovePattern> chessPieceBasicMovePatternMap;
 
     static {
         chessPieceLegalMoveCalculatorMap = new HashMap<>();
         chessPieceLegalMoveCalculatorMap.put(ChessPieceType.PAWN, ChessPieceLegalMoveService::calculateLegalMovesForPawn);
-        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.ROOK, ChessPieceLegalMoveService::calculateLegalMovesForRook);
-        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.KNIGHT, ChessPieceLegalMoveService::calculateLegalMovesForKnight);
-        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.BISHOP, ChessPieceLegalMoveService::calculateLegalMovesForBishop);
-        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.QUEEN, ChessPieceLegalMoveService::calculateLegalMovesForQueen);
+        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.ROOK, ChessPieceLegalMoveService::calculateBasicMovement);
+        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.KNIGHT, ChessPieceLegalMoveService::calculateBasicMovement);
+        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.BISHOP, ChessPieceLegalMoveService::calculateBasicMovement);
+        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.QUEEN, ChessPieceLegalMoveService::calculateBasicMovement);
         chessPieceLegalMoveCalculatorMap.put(ChessPieceType.KING, ChessPieceLegalMoveService::calculateLegalMovesForKing);
-
-        chessPieceBasicMovePatternMap = new HashMap<>();
-        chessPieceBasicMovePatternMap.put(ChessPieceType.PAWN, new MovePattern(1, new int[][]{
-                {0, 1}
-        }));
-        chessPieceBasicMovePatternMap.put(ChessPieceType.KNIGHT, new MovePattern(1, new int[][]{
-                {1, 2}, {1, -2}, {-1, 2}, {-1, -2}, {2, 1}, {2, -1}, {-2, 1}, {-2, -1}
-        }));
-        chessPieceBasicMovePatternMap.put(ChessPieceType.BISHOP, new MovePattern(new int[][]{
-                {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
-        }));
-        chessPieceBasicMovePatternMap.put(ChessPieceType.ROOK, new MovePattern(new int[][]{
-                {1, 0}, {0, 1}, {-1, 0}, {0, -1}
-        }));
-        chessPieceBasicMovePatternMap.put(ChessPieceType.QUEEN, new MovePattern(new int[][]{
-                {1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}
-        }));
-        chessPieceBasicMovePatternMap.put(ChessPieceType.KING, new MovePattern(1, new int[][]{
-                {1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}
-        }));
     }
 
     public void calculateLegalMovesForPieceAtSquare(
@@ -69,27 +50,40 @@ public class ChessPieceLegalMoveService {
             List<ChessMove> legalMoves,
             List<PlayedPieceMove> playedPieceMoves
     ) {
-        ChessPiece chessPiece = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate);
-        MovePatternIterator movePatternIterator = chessPieceBasicMovePatternMap.get(chessPiece.getChessPieceType()).getIteratorStartingAt(currentCoordinate);
-
-        while (movePatternIterator.hasNext()) {
-            ChessCoordinate nextCoordinate = movePatternIterator.next();
-
-            ChessMove chessMove = ChessMove.builder().chessGame(chessGame).build();
-
-            if (
-                    chessBoardPiecesObserver.getChessPieceAt(nextCoordinate) == null ||
-                            chessBoardPiecesObserver.getChessPieceAt(nextCoordinate).getChessColor() != chessPiece.getChessColor()
-            ) {
-                legalMoves.add(chessMove);
-
-                PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, nextCoordinate);
-                playedPieceMoves.add(playedPieceMove);
-            }
-        }
-
         chessPieceLegalMoveCalculatorMap.get(chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessPieceType())
                 .calculateLegalMoves(chessGame, chessBoardPiecesObserver, currentCoordinate, legalMoves, playedPieceMoves);
+    }
+
+    private static void calculateBasicMovement(
+            ChessGame chessGame,
+            ChessBoardPiecesObserver chessBoardPiecesObserver,
+            ChessCoordinate currentCoordinate,
+            List<ChessMove> legalMoves,
+            List<PlayedPieceMove> playedPieceMoves
+    ) {
+        ChessPiece chessPiece = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate);
+
+        PiecePattern piecePattern = chessPieceBasicMovePatternMap.get(chessPiece.getChessPieceType());
+        piecePattern.alongEachDirectionStartingFromWhileDo(
+                currentCoordinate,
+                chessCoordinate -> {
+                    ChessPiece chessPieceAt = chessBoardPiecesObserver.getChessPieceAt(chessCoordinate);
+                    if (chessPieceAt == null) {
+                        return true;
+                    }
+                    if (chessPieceAt.getChessColor() == chessPiece.getChessColor()) {
+                        return false;
+                    }
+                    return true;
+                },
+                chessCoordinate -> {
+                    ChessMove chessMove = ChessMove.builder().chessGame(chessGame).build();
+                    legalMoves.add(chessMove);
+
+                    PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, chessCoordinate);
+                    playedPieceMoves.add(playedPieceMove);
+                }
+        );
     }
 
     private static void calculateLegalMovesForPawn(
@@ -99,47 +93,72 @@ public class ChessPieceLegalMoveService {
             List<ChessMove> legalMoves,
             List<PlayedPieceMove> playedPieceMoves
     ) {
+        ChessColor pawnColor = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessColor();
+        // TODO: Improve this method
 
-    }
+        if (pawnColor == ChessColor.WHITE) {
+            boolean isPawnAtStartingPosition = currentCoordinate.getRow() == 1;
 
-    private static void calculateLegalMovesForRook(
-            ChessGame chessGame,
-            ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessCoordinate currentCoordinate,
-            List<ChessMove> legalMoves,
-            List<PlayedPieceMove> playedPieceMoves
-    ) {
+            int oneStepForwardRow = currentCoordinate.getRow() + 1;
+            int twoStepsForwardRow = currentCoordinate.getRow() + 2;
 
-    }
+            boolean isOneStepForwardExists = ChessCoordinate.isCoordinateValid(oneStepForwardRow, currentCoordinate.getColumn());
+            boolean doesTwoStepsForwardExists = ChessCoordinate.isCoordinateValid(twoStepsForwardRow, currentCoordinate.getColumn());
 
-    private static void calculateLegalMovesForKnight(
-            ChessGame chessGame,
-            ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessCoordinate currentCoordinate,
-            List<ChessMove> legalMoves,
-            List<PlayedPieceMove> playedPieceMoves
-    ) {
+            if (isOneStepForwardExists) {
+                ChessCoordinate oneStepForwardCoordinate = new ChessCoordinate(oneStepForwardRow, currentCoordinate.getColumn());
 
-    }
+                if (chessBoardPiecesObserver.getChessPieceAt(oneStepForwardCoordinate) == null) {
+                    ChessMove chessMove = ChessMove.builder().chessGame(chessGame).build();
+                    legalMoves.add(chessMove);
 
-    private static void calculateLegalMovesForBishop(
-            ChessGame chessGame,
-            ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessCoordinate currentCoordinate,
-            List<ChessMove> legalMoves,
-            List<PlayedPieceMove> playedPieceMoves
-    ) {
+                    PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, oneStepForwardCoordinate);
+                    playedPieceMoves.add(playedPieceMove);
 
-    }
+                    if (isPawnAtStartingPosition && doesTwoStepsForwardExists) {
+                        ChessCoordinate twoStepsForwardCoordinate = new ChessCoordinate(twoStepsForwardRow, currentCoordinate.getColumn());
+                        if (chessBoardPiecesObserver.getChessPieceAt(twoStepsForwardCoordinate) == null) {
+                            ChessMove chessMove2 = ChessMove.builder().chessGame(chessGame).build();
+                            legalMoves.add(chessMove2);
 
-    private static void calculateLegalMovesForQueen(
-            ChessGame chessGame,
-            ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessCoordinate currentCoordinate,
-            List<ChessMove> legalMoves,
-            List<PlayedPieceMove> playedPieceMoves
-    ) {
+                            PlayedPieceMove playedPieceMove2 = new PlayedPieceMove(chessMove2, currentCoordinate, twoStepsForwardCoordinate);
+                            playedPieceMoves.add(playedPieceMove2);
+                        }
+                    }
+                }
+            }
+        } else {
+            boolean isPawnAtStartingPosition = currentCoordinate.getRow() == 6;
 
+            int oneStepForwardRow = currentCoordinate.getRow() - 1;
+            int twoStepsForwardRow = currentCoordinate.getRow() - 2;
+
+            boolean isOneStepForwardExists = ChessCoordinate.isCoordinateValid(oneStepForwardRow, currentCoordinate.getColumn());
+            boolean doesTwoStepsForwardExists = ChessCoordinate.isCoordinateValid(twoStepsForwardRow, currentCoordinate.getColumn());
+
+            if (isOneStepForwardExists) {
+                ChessCoordinate oneStepForwardCoordinate = new ChessCoordinate(oneStepForwardRow, currentCoordinate.getColumn());
+
+                if (chessBoardPiecesObserver.getChessPieceAt(oneStepForwardCoordinate) == null) {
+                    ChessMove chessMove = ChessMove.builder().chessGame(chessGame).build();
+                    legalMoves.add(chessMove);
+
+                    PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, oneStepForwardCoordinate);
+                    playedPieceMoves.add(playedPieceMove);
+
+                    if (isPawnAtStartingPosition && doesTwoStepsForwardExists) {
+                        ChessCoordinate twoStepsForwardCoordinate = new ChessCoordinate(twoStepsForwardRow, currentCoordinate.getColumn());
+                        if (chessBoardPiecesObserver.getChessPieceAt(twoStepsForwardCoordinate) == null) {
+                            ChessMove chessMove2 = ChessMove.builder().chessGame(chessGame).build();
+                            legalMoves.add(chessMove2);
+
+                            PlayedPieceMove playedPieceMove2 = new PlayedPieceMove(chessMove2, currentCoordinate, twoStepsForwardCoordinate);
+                            playedPieceMoves.add(playedPieceMove2);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void calculateLegalMovesForKing(
@@ -149,7 +168,8 @@ public class ChessPieceLegalMoveService {
             List<ChessMove> legalMoves,
             List<PlayedPieceMove> playedPieceMoves
     ) {
-
+        // TODO: Remove this method and implement it separately
+        calculateBasicMovement(chessGame, chessBoardPiecesObserver, currentCoordinate, legalMoves, playedPieceMoves);
     }
 
 }
