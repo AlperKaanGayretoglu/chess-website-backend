@@ -1,9 +1,6 @@
 package com.alpergayretoglu.chess_website_backend.service;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
-import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
-import com.alpergayretoglu.chess_website_backend.entity.chess.ChessMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.PlayedPieceMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
@@ -12,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern.chessPieceBasicMovePatternMap;
@@ -23,11 +19,9 @@ public class ChessPieceLegalMoveService {
     @FunctionalInterface
     private interface ChessPieceLegalMoveCalculator {
         void calculateLegalMoves(
-                ChessGame chessGame,
                 ChessBoardPiecesObserver chessBoardPiecesObserver,
                 ChessCoordinate currentCoordinate,
-                List<ChessMove> legalMoves,
-                List<PlayedPieceMove> playedPieceMoves
+                ChessMoveRegisterer chessMoveRegisterer
         );
     }
 
@@ -44,22 +38,18 @@ public class ChessPieceLegalMoveService {
     }
 
     public void calculateLegalMovesForPieceAtSquare(
-            ChessGame chessGame,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
-            List<ChessMove> legalMoves,
-            List<PlayedPieceMove> playedPieceMoves
+            ChessMoveRegisterer chessMoveRegisterer
     ) {
         chessPieceLegalMoveCalculatorMap.get(chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessPieceType())
-                .calculateLegalMoves(chessGame, chessBoardPiecesObserver, currentCoordinate, legalMoves, playedPieceMoves);
+                .calculateLegalMoves(chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer);
     }
 
     private static void calculateBasicMovement(
-            ChessGame chessGame,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
-            List<ChessMove> legalMoves,
-            List<PlayedPieceMove> playedPieceMoves
+            ChessMoveRegisterer chessMoveRegisterer
     ) {
         ChessPiece chessPiece = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate);
 
@@ -76,100 +66,64 @@ public class ChessPieceLegalMoveService {
                     }
                     return true;
                 },
-                chessCoordinate -> {
-                    ChessMove chessMove = ChessMove.builder().chessGame(chessGame).build();
-                    legalMoves.add(chessMove);
-
-                    PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, chessCoordinate);
-                    playedPieceMoves.add(playedPieceMove);
-                }
+                chessCoordinate -> chessMoveRegisterer.registerNewChessMove(currentCoordinate, chessCoordinate)
         );
     }
 
     private static void calculateLegalMovesForPawn(
-            ChessGame chessGame,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
-            List<ChessMove> legalMoves,
-            List<PlayedPieceMove> playedPieceMoves
+            ChessMoveRegisterer chessMoveRegisterer
     ) {
         ChessColor pawnColor = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessColor();
-        // TODO: Improve this method
+
+        boolean isPawnAtStartingPosition;
+        int oneStepForwardRow;
+        int twoStepsForwardRow;
 
         if (pawnColor == ChessColor.WHITE) {
-            boolean isPawnAtStartingPosition = currentCoordinate.getRow() == 1;
-
-            int oneStepForwardRow = currentCoordinate.getRow() + 1;
-            int twoStepsForwardRow = currentCoordinate.getRow() + 2;
-
-            boolean isOneStepForwardExists = ChessCoordinate.isCoordinateValid(oneStepForwardRow, currentCoordinate.getColumn());
-            boolean doesTwoStepsForwardExists = ChessCoordinate.isCoordinateValid(twoStepsForwardRow, currentCoordinate.getColumn());
-
-            if (isOneStepForwardExists) {
-                ChessCoordinate oneStepForwardCoordinate = new ChessCoordinate(oneStepForwardRow, currentCoordinate.getColumn());
-
-                if (chessBoardPiecesObserver.getChessPieceAt(oneStepForwardCoordinate) == null) {
-                    ChessMove chessMove = ChessMove.builder().chessGame(chessGame).build();
-                    legalMoves.add(chessMove);
-
-                    PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, oneStepForwardCoordinate);
-                    playedPieceMoves.add(playedPieceMove);
-
-                    if (isPawnAtStartingPosition && doesTwoStepsForwardExists) {
-                        ChessCoordinate twoStepsForwardCoordinate = new ChessCoordinate(twoStepsForwardRow, currentCoordinate.getColumn());
-                        if (chessBoardPiecesObserver.getChessPieceAt(twoStepsForwardCoordinate) == null) {
-                            ChessMove chessMove2 = ChessMove.builder().chessGame(chessGame).build();
-                            legalMoves.add(chessMove2);
-
-                            PlayedPieceMove playedPieceMove2 = new PlayedPieceMove(chessMove2, currentCoordinate, twoStepsForwardCoordinate);
-                            playedPieceMoves.add(playedPieceMove2);
-                        }
-                    }
-                }
-            }
+            isPawnAtStartingPosition = currentCoordinate.getRow() == 1;
+            oneStepForwardRow = currentCoordinate.getRow() + 1;
+            twoStepsForwardRow = currentCoordinate.getRow() + 2;
         } else {
-            boolean isPawnAtStartingPosition = currentCoordinate.getRow() == 6;
-
-            int oneStepForwardRow = currentCoordinate.getRow() - 1;
-            int twoStepsForwardRow = currentCoordinate.getRow() - 2;
-
-            boolean isOneStepForwardExists = ChessCoordinate.isCoordinateValid(oneStepForwardRow, currentCoordinate.getColumn());
-            boolean doesTwoStepsForwardExists = ChessCoordinate.isCoordinateValid(twoStepsForwardRow, currentCoordinate.getColumn());
-
-            if (isOneStepForwardExists) {
-                ChessCoordinate oneStepForwardCoordinate = new ChessCoordinate(oneStepForwardRow, currentCoordinate.getColumn());
-
-                if (chessBoardPiecesObserver.getChessPieceAt(oneStepForwardCoordinate) == null) {
-                    ChessMove chessMove = ChessMove.builder().chessGame(chessGame).build();
-                    legalMoves.add(chessMove);
-
-                    PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, oneStepForwardCoordinate);
-                    playedPieceMoves.add(playedPieceMove);
-
-                    if (isPawnAtStartingPosition && doesTwoStepsForwardExists) {
-                        ChessCoordinate twoStepsForwardCoordinate = new ChessCoordinate(twoStepsForwardRow, currentCoordinate.getColumn());
-                        if (chessBoardPiecesObserver.getChessPieceAt(twoStepsForwardCoordinate) == null) {
-                            ChessMove chessMove2 = ChessMove.builder().chessGame(chessGame).build();
-                            legalMoves.add(chessMove2);
-
-                            PlayedPieceMove playedPieceMove2 = new PlayedPieceMove(chessMove2, currentCoordinate, twoStepsForwardCoordinate);
-                            playedPieceMoves.add(playedPieceMove2);
-                        }
-                    }
-                }
-            }
+            isPawnAtStartingPosition = currentCoordinate.getRow() == 6;
+            oneStepForwardRow = currentCoordinate.getRow() - 1;
+            twoStepsForwardRow = currentCoordinate.getRow() - 2;
         }
+
+        boolean isFirstMoveRegistered = registerPawnMove(currentCoordinate, oneStepForwardRow, chessBoardPiecesObserver, chessMoveRegisterer);
+        if (isFirstMoveRegistered && isPawnAtStartingPosition) {
+            registerPawnMove(currentCoordinate, twoStepsForwardRow, chessBoardPiecesObserver, chessMoveRegisterer);
+        }
+
+    }
+
+    private static boolean registerPawnMove(
+            ChessCoordinate initialCoordinate,
+            int moveToRow,
+            ChessBoardPiecesObserver chessBoardPiecesObserver,
+            ChessMoveRegisterer chessMoveRegisterer
+    ) {
+        if (!ChessCoordinate.isCoordinateValid(moveToRow, initialCoordinate.getColumn())) {
+            return false;
+        }
+
+        ChessCoordinate toCoordinate = new ChessCoordinate(moveToRow, initialCoordinate.getColumn());
+        if (chessBoardPiecesObserver.getChessPieceAt(toCoordinate) != null) {
+            return false;
+        }
+
+        chessMoveRegisterer.registerNewChessMove(initialCoordinate, toCoordinate);
+        return true;
     }
 
     private static void calculateLegalMovesForKing(
-            ChessGame chessGame,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
-            List<ChessMove> legalMoves,
-            List<PlayedPieceMove> playedPieceMoves
+            ChessMoveRegisterer chessMoveRegisterer
     ) {
         // TODO: Remove this method and implement it separately
-        calculateBasicMovement(chessGame, chessBoardPiecesObserver, currentCoordinate, legalMoves, playedPieceMoves);
+        calculateBasicMovement(chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer);
     }
 
 }
