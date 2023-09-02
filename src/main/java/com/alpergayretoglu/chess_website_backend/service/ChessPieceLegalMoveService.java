@@ -4,10 +4,6 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.*;
 import com.alpergayretoglu.chess_website_backend.entity.chess.movePattern.MovePatternIterator;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPieceType;
-import com.alpergayretoglu.chess_website_backend.repository.ChessGameRepository;
-import com.alpergayretoglu.chess_website_backend.repository.ChessMoveRepository;
-import com.alpergayretoglu.chess_website_backend.repository.PlayedPieceMoveRepository;
-import com.alpergayretoglu.chess_website_backend.repository.TriggeredPieceMoveRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,23 +32,17 @@ public class ChessPieceLegalMoveService {
         chessPieceLegalMoveCalculatorMap.put(ChessPieceType.KING, (chessBoard, currentCoordinate) -> new ArrayList<>());
     }
 
-    private final ChessMoveRepository chessMoveRepository;
-    private final PlayedPieceMoveRepository playedPieceMoveRepository;
-    private final TriggeredPieceMoveRepository triggeredPieceMoveRepository;
-
-    private final ChessGameRepository chessGameRepository;
-
-    public void calculateAndSaveLegalMovesForPieceAtSquare(ChessBoardPiecesObserver chessBoardPiecesObserver, ChessGame chessGame, ChessCoordinate currentCoordinate) {
+    public void calculateLegalMovesForPieceAtSquare(
+            ChessGame chessGame,
+            ChessBoardPiecesObserver chessBoardPiecesObserver,
+            ChessCoordinate currentCoordinate,
+            List<ChessMove> legalMoves,
+            List<PlayedPieceMove> playedPieceMoves
+    ) {
         ChessPiece chessPiece = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate);
 
-        if (chessPiece == null) {
-            return;
-        }
-
-        List<ChessMove> legalMoves = new ArrayList<>();
-        List<PlayedPieceMove> playedPieceMoves = new ArrayList<>();
-
         MovePatternIterator movePatternIterator = chessPiece.getChessPieceType().getMovePattern().getIteratorStartingAt(currentCoordinate);
+
         while (movePatternIterator.hasNext()) {
             ChessCoordinate nextCoordinate = movePatternIterator.next();
 
@@ -67,13 +57,7 @@ public class ChessPieceLegalMoveService {
                 PlayedPieceMove playedPieceMove = new PlayedPieceMove(chessMove, currentCoordinate, nextCoordinate);
                 playedPieceMoves.add(playedPieceMove);
             }
-
         }
-
-        chessMoveRepository.saveAll(legalMoves);
-        playedPieceMoveRepository.saveAll(playedPieceMoves);
-
-        chessGameRepository.save(chessGame);
     }
 
 }
