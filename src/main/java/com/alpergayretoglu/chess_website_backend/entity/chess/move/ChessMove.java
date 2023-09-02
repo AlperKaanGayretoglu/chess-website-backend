@@ -26,4 +26,10 @@ public class ChessMove extends BaseEntity {
     @Builder.Default
     private List<TriggeredPieceMove> triggeredPieceMoves = new ArrayList<>();
 
+    @OneToMany(mappedBy = "partOfChessMove")
+    @Builder.Default
+    private List<PieceCaptureMove> pieceCaptureMoves = new ArrayList<>();
+
+    private ChessMoveType chessMoveType;
+
 }

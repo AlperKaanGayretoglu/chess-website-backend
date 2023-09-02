@@ -64,9 +64,11 @@ public class ChessPieceLegalMoveService {
                     if (chessPieceAt.getChessColor() == chessPiece.getChessColor()) {
                         return false;
                     }
-                    return true;
+
+                    chessMoveRegisterer.registerNewNormalCaptureMove(currentCoordinate, chessCoordinate);
+                    return false;
                 },
-                chessCoordinate -> chessMoveRegisterer.registerNewChessMove(currentCoordinate, chessCoordinate)
+                chessCoordinate -> chessMoveRegisterer.registerNewNormalPieceMove(currentCoordinate, chessCoordinate)
         );
     }
 
@@ -113,7 +115,7 @@ public class ChessPieceLegalMoveService {
             return false;
         }
 
-        chessMoveRegisterer.registerNewChessMove(initialCoordinate, toCoordinate);
+        chessMoveRegisterer.registerNewNormalPieceMove(initialCoordinate, toCoordinate);
         return true;
     }
 

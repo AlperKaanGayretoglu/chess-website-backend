@@ -4,6 +4,7 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceCaptureMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
 import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
@@ -22,12 +23,12 @@ public class ChessGamePlayMoveService {
 
     private final ChessGameLegalMoveService chessGameLegalMoveService;
 
-    private final ChessGameRepository chessGameRepository;
     private final ChessBoardRepository chessBoardRepository;
     private final ChessGameStateRepository chessGameStateRepository;
 
     private final ChessMoveRepository chessMoveRepository;
     private final TriggeredPieceMoveRepository triggeredPieceMoveRepository;
+    private final PieceCaptureMoveRepository pieceCaptureMoveRepository;
 
     private final PlayedChessMoveMapper playedChessMoveMapper;
 
@@ -42,11 +43,14 @@ public class ChessGamePlayMoveService {
             throw new BusinessException(ErrorCode.ILLEGAL_MOVE());
         }
 
-        PlayedPieceMove playedPieceMove = chessMove.getPlayedPieceMove();
-        chessBoardPiecesModifier.playMove(playedPieceMove);
+        List<PieceCaptureMove> pieceCaptureMoves = pieceCaptureMoveRepository.findAllByPartOfChessMove(chessMove);
+        chessBoardPiecesModifier.playPieceCaptures(pieceCaptureMoves);
 
         List<TriggeredPieceMove> triggeredPieceMoves = triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove);
         chessBoardPiecesModifier.playTriggeredMoves(triggeredPieceMoves);
+
+        PlayedPieceMove playedPieceMove = chessMove.getPlayedPieceMove();
+        chessBoardPiecesModifier.playPieceMove(playedPieceMove);
 
         ChessGameState chessGameState = chessGame.getChessGameState();
         chessGameState.switchCurrentPlayer();

@@ -1,9 +1,9 @@
 package com.alpergayretoglu.chess_website_backend.service;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceCaptureMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
-import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 
 import java.util.List;
@@ -23,14 +23,6 @@ public class ChessBoardPiecesModifier {
         return chessBoardPiecesObserver;
     }
 
-    public ChessPiece getChessPieceAt(ChessCoordinate chessCoordinate) {
-        return chessBoardPiecesObserver.getChessPieceAt(chessCoordinate);
-    }
-
-    public List<ChessCoordinate> getCoordinatesOfPiecesWithColor(ChessColor chessColor) {
-        return chessBoardPiecesObserver.getCoordinatesOfPiecesWithColor(chessColor);
-    }
-
     public ChessPiece removeChessPieceAt(ChessCoordinate chessCoordinate) {
         return chessPieces.remove(chessCoordinate);
     }
@@ -39,7 +31,7 @@ public class ChessBoardPiecesModifier {
         chessPieces.put(chessCoordinate, chessPiece);
     }
 
-    public void playMove(PlayedPieceMove playedPieceMove) {
+    public void playPieceMove(PlayedPieceMove playedPieceMove) {
         ChessPiece chessPiece = removeChessPieceAt(playedPieceMove.getFrom());
         putChessPieceTo(playedPieceMove.getTo(), chessPiece);
     }
@@ -49,6 +41,10 @@ public class ChessBoardPiecesModifier {
             ChessPiece chessPiece = removeChessPieceAt(triggeredPieceMove.getFrom());
             putChessPieceTo(triggeredPieceMove.getTo(), chessPiece);
         });
+    }
+
+    public void playPieceCaptures(List<PieceCaptureMove> pieceCaptureMoves) {
+        pieceCaptureMoves.forEach(pieceCaptureMove -> removeChessPieceAt(pieceCaptureMove.getFrom()));
     }
 
     public void clear() {
