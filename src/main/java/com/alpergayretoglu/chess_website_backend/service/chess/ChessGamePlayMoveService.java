@@ -11,6 +11,7 @@ import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.*;
+import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.ChessGameLegalMoveService;
 import com.alpergayretoglu.chess_website_backend.service.mapper.PlayedChessMoveMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

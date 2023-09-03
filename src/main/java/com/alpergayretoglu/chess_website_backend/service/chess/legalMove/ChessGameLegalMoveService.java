@@ -1,9 +1,11 @@
-package com.alpergayretoglu.chess_website_backend.service.chess;
+package com.alpergayretoglu.chess_website_backend.service.chess.legalMove;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.repository.*;
+import com.alpergayretoglu.chess_website_backend.service.chess.ChessBoardPiecesObserver;
+import com.alpergayretoglu.chess_website_backend.service.chess.ChessMoveRegisterer;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;

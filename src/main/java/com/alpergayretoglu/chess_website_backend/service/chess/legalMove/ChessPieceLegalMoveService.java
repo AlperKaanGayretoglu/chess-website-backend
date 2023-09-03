@@ -1,4 +1,4 @@
-package com.alpergayretoglu.chess_website_backend.service.chess;
+package com.alpergayretoglu.chess_website_backend.service.chess.legalMove;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMoveType;
@@ -8,6 +8,8 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePatte
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPieceType;
+import com.alpergayretoglu.chess_website_backend.service.chess.ChessBoardPiecesObserver;
+import com.alpergayretoglu.chess_website_backend.service.chess.ChessMoveRegisterer;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 

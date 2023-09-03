@@ -15,6 +15,7 @@ import com.alpergayretoglu.chess_website_backend.model.response.chess.CreateChes
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.*;
 import com.alpergayretoglu.chess_website_backend.service.SecurityService;
+import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.ChessGameLegalMoveService;
 import com.alpergayretoglu.chess_website_backend.service.mapper.ChessGameMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
