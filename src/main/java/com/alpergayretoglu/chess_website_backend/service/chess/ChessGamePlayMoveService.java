@@ -4,9 +4,6 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceCaptureMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
 import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
@@ -44,14 +41,11 @@ public class ChessGamePlayMoveService {
             throw new BusinessException(ErrorCode.ILLEGAL_MOVE());
         }
 
-        List<PieceCaptureMove> pieceCaptureMoves = pieceCaptureMoveRepository.findAllByPartOfChessMove(chessMove);
-        chessBoardPiecesModifier.playPieceCaptures(pieceCaptureMoves);
-
-        List<TriggeredPieceMove> triggeredPieceMoves = triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove);
-        chessBoardPiecesModifier.playTriggeredMoves(triggeredPieceMoves);
-
-        PlayedPieceMove playedPieceMove = chessMove.getPlayedPieceMove();
-        chessBoardPiecesModifier.playPieceMove(playedPieceMove);
+        chessBoardPiecesModifier.playChessMove(
+                chessMove.getPlayedPieceMove(),
+                triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove),
+                pieceCaptureMoveRepository.findAllByPartOfChessMove(chessMove)
+        );
 
         ChessGameState chessGameState = chessGame.getChessGameState();
         chessGameState.switchCurrentPlayer();

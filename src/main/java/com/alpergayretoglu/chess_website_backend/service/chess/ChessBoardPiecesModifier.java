@@ -31,19 +31,25 @@ public class ChessBoardPiecesModifier {
         chessPieces.put(chessCoordinate, chessPiece);
     }
 
-    public void playPieceMove(PlayedPieceMove playedPieceMove) {
+    public void playChessMove(PlayedPieceMove playedPieceMove, List<TriggeredPieceMove> triggeredPieceMoves, List<PieceCaptureMove> pieceCaptureMoves) {
+        playPieceCaptures(pieceCaptureMoves);
+        playTriggeredMoves(triggeredPieceMoves);
+        playPieceMove(playedPieceMove);
+    }
+
+    private void playPieceMove(PlayedPieceMove playedPieceMove) {
         ChessPiece chessPiece = removeChessPieceAt(playedPieceMove.getFrom());
         putChessPieceTo(playedPieceMove.getTo(), chessPiece);
     }
 
-    public void playTriggeredMoves(List<TriggeredPieceMove> triggeredPieceMoves) {
+    private void playTriggeredMoves(List<TriggeredPieceMove> triggeredPieceMoves) {
         triggeredPieceMoves.forEach(triggeredPieceMove -> {
             ChessPiece chessPiece = removeChessPieceAt(triggeredPieceMove.getFrom());
             putChessPieceTo(triggeredPieceMove.getTo(), chessPiece);
         });
     }
 
-    public void playPieceCaptures(List<PieceCaptureMove> pieceCaptureMoves) {
+    private void playPieceCaptures(List<PieceCaptureMove> pieceCaptureMoves) {
         pieceCaptureMoves.forEach(pieceCaptureMove -> removeChessPieceAt(pieceCaptureMove.getFrom()));
     }
 
