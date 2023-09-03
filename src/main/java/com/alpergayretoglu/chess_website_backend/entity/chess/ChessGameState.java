@@ -4,10 +4,7 @@ import com.alpergayretoglu.chess_website_backend.entity.BaseEntity;
 import com.alpergayretoglu.chess_website_backend.entity.User;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessGameStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -30,6 +27,11 @@ public class ChessGameState extends BaseEntity {
     @Builder.Default
     private ChessColor currentPlayerColor = ChessColor.WHITE;
 
+    @Setter
+    private boolean isWhiteInCheck;
+    @Setter
+    private boolean isBlackInCheck;
+
     @Builder.Default
     private ChessGameStatus chessGameStatus = ChessGameStatus.ONGOING;
 
@@ -50,6 +52,18 @@ public class ChessGameState extends BaseEntity {
 
     public void switchCurrentPlayer() {
         currentPlayerColor = currentPlayerColor == ChessColor.WHITE ? ChessColor.BLACK : ChessColor.WHITE;
+    }
+
+    public boolean isCurrentPlayerInCheck() {
+        return currentPlayerColor == ChessColor.WHITE ? isWhiteInCheck : isBlackInCheck;
+    }
+
+    public void setCurrentPlayerInCheck(boolean inCheck) {
+        if (currentPlayerColor == ChessColor.WHITE) {
+            isWhiteInCheck = inCheck;
+        } else {
+            isBlackInCheck = inCheck;
+        }
     }
 
 }

@@ -26,6 +26,18 @@ public class ChessGame extends BaseEntity {
         return chessGameState.hasGameEnded();
     }
 
+    public boolean isCurrentPlayerInCheck() {
+        return chessGameState.isCurrentPlayerInCheck();
+    }
+
+    public boolean isWhiteInCheck() {
+        return chessGameState.isWhiteInCheck();
+    }
+
+    public boolean isBlackInCheck() {
+        return chessGameState.isBlackInCheck();
+    }
+
     public User getCurrentPlayer() {
         return chessGameState.getCurrentPlayer();
     }

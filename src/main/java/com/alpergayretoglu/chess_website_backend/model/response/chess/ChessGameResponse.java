@@ -20,5 +20,8 @@ public class ChessGameResponse {
     private final String currentPlayerUsername;
 
     private final List<ChessMoveResponse> legalMovesForCurrentPlayer;
-    
+
+    private final boolean isWhiteInCheck;
+    private final boolean isBlackInCheck;
+
 }

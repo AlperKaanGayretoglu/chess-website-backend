@@ -11,6 +11,7 @@ import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessBoardPiecesObserver;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessMoveRegisterer;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -19,10 +20,11 @@ import java.util.Collections;
 @NoArgsConstructor
 public class PawnLegalMoveService {
     static void calculateLegalMovesForPawn(
+            boolean isCurrentPlayerInCheck,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
             ChessMoveRegisterer chessMoveRegisterer,
-            ChessMove lastPlayedChessMove
+            @Nullable ChessMove lastPlayedChessMove
     ) {
         ChessColor pawnColor = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessColor();
 

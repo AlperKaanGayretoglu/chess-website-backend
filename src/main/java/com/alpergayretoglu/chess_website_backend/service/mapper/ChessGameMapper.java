@@ -28,7 +28,10 @@ public class ChessGameMapper {
                                 .stream()
                                 .map(chessMoveMapper::fromEntity)
                                 .collect(Collectors.toList())
-                ).build();
+                )
+                .isWhiteInCheck(game.isWhiteInCheck())
+                .isBlackInCheck(game.isBlackInCheck())
+                .build();
 
     }
 }

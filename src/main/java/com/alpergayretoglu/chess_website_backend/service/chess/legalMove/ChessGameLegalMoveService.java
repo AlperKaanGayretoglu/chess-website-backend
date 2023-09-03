@@ -2,6 +2,7 @@ package com.alpergayretoglu.chess_website_backend.service.chess.legalMove;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.repository.*;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessBoardPiecesObserver;
@@ -26,6 +27,7 @@ public class ChessGameLegalMoveService {
     private final PieceCaptureMoveRepository pieceCaptureMoveRepository;
 
     private final ChessGameRepository chessGameRepository;
+    private final ChessGameStateRepository chessGameStateRepository;
 
 
     public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame, ChessBoardPiecesObserver chessBoardPiecesObserver, ChessMove lastPlayedChessMove) {
@@ -36,8 +38,18 @@ public class ChessGameLegalMoveService {
 
         ChessMoveRegisterer chessMoveRegisterer = new ChessMoveRegisterer(chessGame);
 
+        boolean isCurrentPlayerInCheck = PlayerInCheckService.isPlayerWithColorInCheck(chessGame.getCurrentPlayerColor(), chessBoardPiecesObserver);
+
+        ChessGameState chessGameState = chessGame.getChessGameState();
+        chessGameState.setWhiteInCheck(false);
+        chessGameState.setBlackInCheck(false);
+
+        chessGameState.setCurrentPlayerInCheck(isCurrentPlayerInCheck);
+        chessGameStateRepository.save(chessGameState);
+
         for (ChessCoordinate chessCoordinate : chessBoardPiecesObserver.getCoordinatesOfPiecesWithColor(chessGame.getCurrentPlayerColor())) {
             chessPieceLegalMoveService.calculateLegalMovesForPieceAtSquare(
+                    isCurrentPlayerInCheck,
                     chessBoardPiecesObserver,
                     chessCoordinate,
                     chessMoveRegisterer,

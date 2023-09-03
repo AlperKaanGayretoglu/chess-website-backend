@@ -22,10 +22,11 @@ public class ChessPieceLegalMoveService {
     @FunctionalInterface
     private interface ChessPieceLegalMoveCalculator {
         void calculateLegalMoves(
+                boolean isCurrentPlayerInCheck,
                 ChessBoardPiecesObserver chessBoardPiecesObserver,
                 ChessCoordinate currentCoordinate,
                 ChessMoveRegisterer chessMoveRegisterer,
-                ChessMove lastPlayedChessMove
+                @Nullable ChessMove lastPlayedChessMove
         );
     }
 
@@ -42,20 +43,35 @@ public class ChessPieceLegalMoveService {
     }
 
     public void calculateLegalMovesForPieceAtSquare(
+            boolean isCurrentPlayerInCheck,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
             ChessMoveRegisterer chessMoveRegisterer,
             @Nullable ChessMove lastPlayedChessMove
     ) {
         chessPieceLegalMoveCalculatorMap.get(chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessPieceType())
-                .calculateLegalMoves(chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer, lastPlayedChessMove);
+                .calculateLegalMoves(isCurrentPlayerInCheck, chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer, lastPlayedChessMove);
+    }
+
+    public static boolean isThisALegalMoveForPiece(
+            boolean isCurrentPlayerInCheck,
+            ChessBoardPiecesObserver chessBoardPiecesObserver,
+            ChessCoordinate sourceCoordinate,
+            ChessCoordinate targetCoordinate,
+            @Nullable ChessMove lastPlayedChessMove
+    ) {
+        ChessMoveRegisterer chessMoveRegisterer = new ChessMoveRegisterer(null);
+        chessPieceLegalMoveCalculatorMap.get(chessBoardPiecesObserver.getChessPieceAt(sourceCoordinate).getChessPieceType())
+                .calculateLegalMoves(isCurrentPlayerInCheck, chessBoardPiecesObserver, sourceCoordinate, chessMoveRegisterer, lastPlayedChessMove);
+        return chessMoveRegisterer.getPieceCaptureMoves().stream().anyMatch(chessMove -> chessMove.getFrom().equals(targetCoordinate));
     }
 
     private static void calculateBasicMovement(
+            boolean isCurrentPlayerInCheck,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
             ChessMoveRegisterer chessMoveRegisterer,
-            ChessMove lastPlayedChessMove
+            @Nullable ChessMove lastPlayedChessMove
     ) {
         ChessPiece chessPiece = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate);
 
@@ -70,7 +86,6 @@ public class ChessPieceLegalMoveService {
                     if (chessPieceAt.getChessColor() == chessPiece.getChessColor()) {
                         return false;
                     }
-
                     chessMoveRegisterer.registerNewNormalCaptureMove(currentCoordinate, chessCoordinate);
                     return false;
                 },
@@ -79,13 +94,14 @@ public class ChessPieceLegalMoveService {
     }
 
     private static void calculateLegalMovesForKing(
+            boolean isCurrentPlayerInCheck,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
             ChessMoveRegisterer chessMoveRegisterer,
-            ChessMove lastPlayedChessMove
+            @Nullable ChessMove lastPlayedChessMove
     ) {
         // TODO: Remove this method and implement it separately
-        calculateBasicMovement(chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer, lastPlayedChessMove);
+        calculateBasicMovement(isCurrentPlayerInCheck, chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer, lastPlayedChessMove);
     }
 
 }

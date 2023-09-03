@@ -14,6 +14,11 @@ public class PlayedChessMoveResponse {
     private final ChessMoveResponse playedChessMove;
 
     private final String currentPlayerUsername;
+    private final String whitePlayerUsername;
+    private final String blackPlayerUsername;
+
     private final List<ChessMoveResponse> legalMovesForCurrentPlayer;
+
+    private final boolean isCurrentPlayerInCheck;
 
 }
