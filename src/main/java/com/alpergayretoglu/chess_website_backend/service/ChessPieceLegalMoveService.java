@@ -1,6 +1,9 @@
 package com.alpergayretoglu.chess_website_backend.service;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMoveType;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.ChessMoveInfo;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.PlayedPieceMoveInfo;
 import com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
@@ -93,9 +96,21 @@ public class ChessPieceLegalMoveService {
             twoStepsForwardRow = currentCoordinate.getRow() + 2;
         }
 
-        boolean isFirstMoveRegistered = registerPawnMove(currentCoordinate, oneStepForwardRow, chessBoardPiecesObserver, chessMoveRegisterer);
+        boolean isFirstMoveRegistered = registerPawnMove(
+                currentCoordinate,
+                oneStepForwardRow,
+                chessBoardPiecesObserver,
+                chessMoveRegisterer,
+                ChessMoveType.NORMAL_PIECE_MOVEMENT
+        );
         if (isFirstMoveRegistered && isPawnAtStartingPosition) {
-            registerPawnMove(currentCoordinate, twoStepsForwardRow, chessBoardPiecesObserver, chessMoveRegisterer);
+            registerPawnMove(
+                    currentCoordinate,
+                    twoStepsForwardRow,
+                    chessBoardPiecesObserver,
+                    chessMoveRegisterer,
+                    ChessMoveType.PAWN_DOUBLE_MOVEMENT
+            );
         }
 
     }
@@ -104,7 +119,8 @@ public class ChessPieceLegalMoveService {
             ChessCoordinate initialCoordinate,
             int moveToRow,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessMoveRegisterer chessMoveRegisterer
+            ChessMoveRegisterer chessMoveRegisterer,
+            ChessMoveType chessMoveType
     ) {
         if (!ChessCoordinate.isCoordinateValid(moveToRow, initialCoordinate.getColumn())) {
             return false;
@@ -115,7 +131,12 @@ public class ChessPieceLegalMoveService {
             return false;
         }
 
-        chessMoveRegisterer.registerNewNormalPieceMove(initialCoordinate, toCoordinate);
+        chessMoveRegisterer.registerNewChessMove(
+                ChessMoveInfo.builder()
+                        .playedPieceMoveInfo(new PlayedPieceMoveInfo(initialCoordinate, toCoordinate))
+                        .chessMoveType(chessMoveType)
+                        .build()
+        );
         return true;
     }
 
