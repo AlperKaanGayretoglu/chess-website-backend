@@ -28,7 +28,7 @@ public class ChessGameLegalMoveService {
     private final ChessGameRepository chessGameRepository;
 
 
-    public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame, ChessBoardPiecesObserver chessBoardPiecesObserver) {
+    public void calculateAndSaveLegalMovesForCurrentPlayer(ChessGame chessGame, ChessBoardPiecesObserver chessBoardPiecesObserver, ChessMove lastPlayedChessMove) {
         List<ChessMove> chessMoves = chessMoveRepository.findAllByChessGame(chessGame);
         triggeredPieceMoveRepository.deleteAllByPartOfChessMoveIn(chessMoves);
         pieceCaptureMoveRepository.deleteAllByPartOfChessMoveIn(chessMoves);
@@ -40,7 +40,8 @@ public class ChessGameLegalMoveService {
             chessPieceLegalMoveService.calculateLegalMovesForPieceAtSquare(
                     chessBoardPiecesObserver,
                     chessCoordinate,
-                    chessMoveRegisterer
+                    chessMoveRegisterer,
+                    lastPlayedChessMove
             );
         }
 

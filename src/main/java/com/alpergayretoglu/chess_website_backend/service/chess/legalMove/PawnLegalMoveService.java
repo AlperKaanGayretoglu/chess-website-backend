@@ -1,8 +1,10 @@
 package com.alpergayretoglu.chess_website_backend.service.chess.legalMove;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMoveType;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.ChessMoveInfo;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.PieceCaptureMoveInfo;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.PlayedPieceMoveInfo;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
@@ -11,13 +13,16 @@ import com.alpergayretoglu.chess_website_backend.service.chess.ChessMoveRegister
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 @Service
 @NoArgsConstructor
 public class PawnLegalMoveService {
     static void calculateLegalMovesForPawn(
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
-            ChessMoveRegisterer chessMoveRegisterer
+            ChessMoveRegisterer chessMoveRegisterer,
+            ChessMove lastPlayedChessMove
     ) {
         ChessColor pawnColor = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessColor();
 
@@ -26,21 +31,21 @@ public class PawnLegalMoveService {
         int oneStepForwardRow;
         int twoStepsForwardRow;
 
-        int rightDiagonalColumn;
-        int leftDiagonalColumn;
+        int rightColumn;
+        int leftColumn;
 
         if (pawnColor == ChessColor.WHITE) {
             isPawnAtStartingPosition = currentCoordinate.getRow() == 6;
             oneStepForwardRow = currentCoordinate.getRow() - 1;
             twoStepsForwardRow = currentCoordinate.getRow() - 2;
-            rightDiagonalColumn = currentCoordinate.getColumn() + 1;
-            leftDiagonalColumn = currentCoordinate.getColumn() - 1;
+            rightColumn = currentCoordinate.getColumn() + 1;
+            leftColumn = currentCoordinate.getColumn() - 1;
         } else {
             isPawnAtStartingPosition = currentCoordinate.getRow() == 1;
             oneStepForwardRow = currentCoordinate.getRow() + 1;
             twoStepsForwardRow = currentCoordinate.getRow() + 2;
-            rightDiagonalColumn = currentCoordinate.getColumn() - 1;
-            leftDiagonalColumn = currentCoordinate.getColumn() + 1;
+            rightColumn = currentCoordinate.getColumn() - 1;
+            leftColumn = currentCoordinate.getColumn() + 1;
         }
 
         boolean isFirstMoveRegistered = registerPawnMove(
@@ -63,7 +68,7 @@ public class PawnLegalMoveService {
         registerPawnCapture(
                 currentCoordinate,
                 oneStepForwardRow,
-                rightDiagonalColumn,
+                rightColumn,
                 chessBoardPiecesObserver,
                 chessMoveRegisterer
         );
@@ -71,9 +76,18 @@ public class PawnLegalMoveService {
         registerPawnCapture(
                 currentCoordinate,
                 oneStepForwardRow,
-                leftDiagonalColumn,
+                leftColumn,
                 chessBoardPiecesObserver,
                 chessMoveRegisterer
+        );
+
+        registerEnPassantCapture(
+                currentCoordinate,
+                oneStepForwardRow,
+                rightColumn,
+                leftColumn,
+                chessMoveRegisterer,
+                lastPlayedChessMove
         );
 
     }
@@ -121,5 +135,41 @@ public class PawnLegalMoveService {
         }
 
         chessMoveRegisterer.registerNewNormalCaptureMove(initialCoordinate, toCoordinate);
+    }
+
+    private static void registerEnPassantCapture(
+            ChessCoordinate initialCoordinate,
+            int moveToRow,
+            int rightOfPawnColumn,
+            int leftOfPawnColumn,
+            ChessMoveRegisterer chessMoveRegisterer,
+            ChessMove lastPlayedChessMove
+    ) {
+        if (lastPlayedChessMove == null || lastPlayedChessMove.getChessMoveType() != ChessMoveType.PAWN_DOUBLE_MOVEMENT) {
+            return;
+        }
+
+        ChessCoordinate lastPlayedMoveToCoordinate = lastPlayedChessMove.getPlayedPieceMove().getTo();
+        if (lastPlayedMoveToCoordinate.getRow() != initialCoordinate.getRow()) {
+            return;
+        }
+
+        int column = lastPlayedMoveToCoordinate.getColumn() == rightOfPawnColumn ? rightOfPawnColumn
+                : lastPlayedMoveToCoordinate.getColumn() == leftOfPawnColumn ? leftOfPawnColumn
+                : -1;
+
+        if (column == -1) {
+            return;
+        }
+
+        chessMoveRegisterer.registerNewChessMove(
+                ChessMoveInfo.builder()
+                        .playedPieceMoveInfo(new PlayedPieceMoveInfo(initialCoordinate, new ChessCoordinate(moveToRow, column)))
+                        .pieceCaptureMoveInfos(Collections.singletonList(
+                                new PieceCaptureMoveInfo(lastPlayedChessMove.getPlayedPieceMove().getTo()))
+                        ).chessMoveType(ChessMoveType.PAWN_EN_PASSANT_CAPTURE)
+                        .build()
+
+        );
     }
 }

@@ -1,12 +1,14 @@
 package com.alpergayretoglu.chess_website_backend.service.chess.legalMove;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPieceType;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessBoardPiecesObserver;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessMoveRegisterer;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,7 +24,8 @@ public class ChessPieceLegalMoveService {
         void calculateLegalMoves(
                 ChessBoardPiecesObserver chessBoardPiecesObserver,
                 ChessCoordinate currentCoordinate,
-                ChessMoveRegisterer chessMoveRegisterer
+                ChessMoveRegisterer chessMoveRegisterer,
+                ChessMove lastPlayedChessMove
         );
     }
 
@@ -41,16 +44,18 @@ public class ChessPieceLegalMoveService {
     public void calculateLegalMovesForPieceAtSquare(
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
-            ChessMoveRegisterer chessMoveRegisterer
+            ChessMoveRegisterer chessMoveRegisterer,
+            @Nullable ChessMove lastPlayedChessMove
     ) {
         chessPieceLegalMoveCalculatorMap.get(chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessPieceType())
-                .calculateLegalMoves(chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer);
+                .calculateLegalMoves(chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer, lastPlayedChessMove);
     }
 
     private static void calculateBasicMovement(
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
-            ChessMoveRegisterer chessMoveRegisterer
+            ChessMoveRegisterer chessMoveRegisterer,
+            ChessMove lastPlayedChessMove
     ) {
         ChessPiece chessPiece = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate);
 
@@ -76,10 +81,11 @@ public class ChessPieceLegalMoveService {
     private static void calculateLegalMovesForKing(
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate currentCoordinate,
-            ChessMoveRegisterer chessMoveRegisterer
+            ChessMoveRegisterer chessMoveRegisterer,
+            ChessMove lastPlayedChessMove
     ) {
         // TODO: Remove this method and implement it separately
-        calculateBasicMovement(chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer);
+        calculateBasicMovement(chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer, lastPlayedChessMove);
     }
 
 }
