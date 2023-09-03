@@ -1,4 +1,4 @@
-package com.alpergayretoglu.chess_website_backend.service;
+package com.alpergayretoglu.chess_website_backend.service.chess;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;

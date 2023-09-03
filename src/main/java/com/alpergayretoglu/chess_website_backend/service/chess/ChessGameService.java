@@ -1,4 +1,4 @@
-package com.alpergayretoglu.chess_website_backend.service;
+package com.alpergayretoglu.chess_website_backend.service.chess;
 
 import com.alpergayretoglu.chess_website_backend.entity.User;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
@@ -14,6 +14,7 @@ import com.alpergayretoglu.chess_website_backend.model.response.chess.ChessGameR
 import com.alpergayretoglu.chess_website_backend.model.response.chess.CreateChessGameResponse;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.*;
+import com.alpergayretoglu.chess_website_backend.service.SecurityService;
 import com.alpergayretoglu.chess_website_backend.service.mapper.ChessGameMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;

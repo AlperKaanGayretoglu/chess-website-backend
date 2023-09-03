@@ -2,7 +2,7 @@ package com.alpergayretoglu.chess_website_backend.controller;
 
 import com.alpergayretoglu.chess_website_backend.model.request.chess.PlayChessMoveRequest;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
-import com.alpergayretoglu.chess_website_backend.service.ChessGameService;
+import com.alpergayretoglu.chess_website_backend.service.chess.ChessGameService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;

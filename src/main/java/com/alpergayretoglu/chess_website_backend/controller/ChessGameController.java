@@ -4,7 +4,7 @@ import com.alpergayretoglu.chess_website_backend.model.request.chess.CreateChess
 import com.alpergayretoglu.chess_website_backend.model.response.chess.ChessGameResponse;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.CreateChessGameResponse;
 import com.alpergayretoglu.chess_website_backend.service.AuthenticationService;
-import com.alpergayretoglu.chess_website_backend.service.ChessGameService;
+import com.alpergayretoglu.chess_website_backend.service.chess.ChessGameService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
