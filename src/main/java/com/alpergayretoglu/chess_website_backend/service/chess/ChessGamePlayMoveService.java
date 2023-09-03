@@ -6,9 +6,11 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
+import com.alpergayretoglu.chess_website_backend.model.response.chess.ChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.*;
 import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.ChessGameLegalMoveService;
+import com.alpergayretoglu.chess_website_backend.service.mapper.ChessMoveMapper;
 import com.alpergayretoglu.chess_website_backend.service.mapper.PlayedChessMoveMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class ChessGamePlayMoveService {
     private final PieceCaptureMoveRepository pieceCaptureMoveRepository;
 
     private final PlayedChessMoveMapper playedChessMoveMapper;
+    private final ChessMoveMapper chessMoveMapper;
 
     public PlayedChessMoveResponse playMove(ChessGame chessGame, ChessMove chessMove) {
         final ChessBoardPiecesModifier chessBoardPiecesModifier = new ChessBoardPiecesModifier(chessGame.getChessBoard().getChessPieces());
@@ -40,6 +43,8 @@ public class ChessGamePlayMoveService {
         if (!legalMovesForCurrentPlayer.contains(chessMove)) {
             throw new BusinessException(ErrorCode.ILLEGAL_MOVE());
         }
+
+        ChessMoveResponse chessMoveResponse = chessMoveMapper.fromEntity(chessMove);
 
         chessBoardPiecesModifier.playChessMove(
                 chessMove.getPlayedPieceMove(),
@@ -54,6 +59,6 @@ public class ChessGamePlayMoveService {
         chessGameStateRepository.save(chessGameState);
 
         chessGameLegalMoveService.calculateAndSaveLegalMovesForCurrentPlayer(chessGame, chessBoardPiecesModifier.turnIntoObserver(), chessMove);
-        return playedChessMoveMapper.fromEntity(chessGame, chessMove);
+        return playedChessMoveMapper.fromEntity(chessGame, chessMoveResponse);
     }
 }

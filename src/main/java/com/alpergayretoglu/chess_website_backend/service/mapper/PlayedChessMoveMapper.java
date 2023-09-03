@@ -1,7 +1,7 @@
 package com.alpergayretoglu.chess_website_backend.service.mapper;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
+import com.alpergayretoglu.chess_website_backend.model.response.chess.ChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.ChessMoveRepository;
 import lombok.AllArgsConstructor;
@@ -16,9 +16,9 @@ public class PlayedChessMoveMapper {
 
     private final ChessMoveMapper chessMoveMapper;
 
-    public PlayedChessMoveResponse fromEntity(ChessGame game, ChessMove move) {
+    public PlayedChessMoveResponse fromEntity(ChessGame game, ChessMoveResponse moveResponse) {
         return PlayedChessMoveResponse.builder()
-                .playedChessMove(chessMoveMapper.fromEntity(move))
+                .playedChessMove(moveResponse)
                 .currentPlayerUsername(game.getCurrentPlayer().getUsername())
                 .legalMovesForCurrentPlayer(
                         chessMoveRepository.findAllByChessGame(game)
