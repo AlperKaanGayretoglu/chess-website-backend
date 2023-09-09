@@ -63,7 +63,7 @@ public class ChessPieceLegalMoveService {
         ChessMoveRegisterer chessMoveRegisterer = new ChessMoveRegisterer(null);
         chessPieceLegalMoveCalculatorMap.get(chessBoardPiecesObserver.getChessPieceAt(sourceCoordinate).getChessPieceType())
                 .calculateLegalMoves(isCurrentPlayerInCheck, chessBoardPiecesObserver, sourceCoordinate, chessMoveRegisterer, lastPlayedChessMove);
-        return chessMoveRegisterer.getPieceCaptureMoves().stream().anyMatch(chessMove -> chessMove.getFrom().equals(targetCoordinate));
+        return chessMoveRegisterer.getPlayedPieceMoves().stream().anyMatch(chessMove -> chessMove.getTo().equals(targetCoordinate));
     }
 
     private static void calculateBasicMovement(
