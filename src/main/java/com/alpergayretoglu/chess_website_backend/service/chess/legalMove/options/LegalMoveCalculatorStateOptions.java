@@ -16,4 +16,10 @@ public class LegalMoveCalculatorStateOptions {
 
     @Builder.Default
     private final boolean shouldConsiderSafetyOfTheKing = true;
+
+    private boolean isShortCastlingStillAvailableForWhite;
+    private boolean isLongCastlingStillAvailableForWhite;
+
+    private boolean isShortCastlingStillAvailableForBlack;
+    private boolean isLongCastlingStillAvailableForBlack;
 }

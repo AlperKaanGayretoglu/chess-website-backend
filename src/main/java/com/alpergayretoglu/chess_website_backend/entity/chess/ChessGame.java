@@ -22,6 +22,16 @@ public class ChessGame extends BaseEntity {
     @OneToOne
     private ChessBoard chessBoard;
 
+    @Builder.Default
+    private boolean isShortCastlingStillAvailableForWhite = true;
+    @Builder.Default
+    private boolean isLongCastlingStillAvailableForWhite = true;
+
+    @Builder.Default
+    private boolean isShortCastlingStillAvailableForBlack = true;
+    @Builder.Default
+    private boolean isLongCastlingStillAvailableForBlack = true;
+
     public boolean hasGameEnded() {
         return chessGameState.hasGameEnded();
     }

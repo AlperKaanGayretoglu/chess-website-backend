@@ -1,11 +1,16 @@
 package com.alpergayretoglu.chess_website_backend.service.chess;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
+import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceCaptureMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
 import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
+import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.ChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.model.response.chess.PlayedChessMoveResponse;
 import com.alpergayretoglu.chess_website_backend.repository.*;
@@ -17,12 +22,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.alpergayretoglu.chess_website_backend.service.chess.ChessDefaultService.getDefaultLongCastlingRookCoordinate;
+import static com.alpergayretoglu.chess_website_backend.service.chess.ChessDefaultService.getDefaultShortCastlingRookCoordinate;
+
 @Service
 @AllArgsConstructor
 public class ChessGamePlayMoveService {
 
     private final ChessGameLegalMoveService chessGameLegalMoveService;
 
+    private final ChessGameRepository chessGameRepository;
     private final ChessBoardRepository chessBoardRepository;
     private final ChessGameStateRepository chessGameStateRepository;
 
@@ -44,12 +53,25 @@ public class ChessGamePlayMoveService {
             throw new BusinessException(ErrorCode.ILLEGAL_MOVE());
         }
 
+        PlayedPieceMove toBePlayedPieceMove = chessMove.getPlayedPieceMove();
+        List<TriggeredPieceMove> toBeTriggeredPieceMoves = triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove);
+        List<PieceCaptureMove> toBeCapturedPieceMoves = pieceCaptureMoveRepository.findAllByPartOfChessMove(chessMove);
+
+        modifyCastlingAvailabilityIfThisMoveIsToBePlayed(
+                chessGame,
+                chessBoardPiecesModifier.turnIntoObserver(),
+                toBePlayedPieceMove,
+                toBeTriggeredPieceMoves,
+                toBeCapturedPieceMoves
+        );
+        chessGameRepository.save(chessGame);
+
         ChessMoveResponse chessMoveResponse = chessMoveMapper.fromEntity(chessMove);
 
         chessBoardPiecesModifier.playChessMove(
-                chessMove.getPlayedPieceMove(),
-                triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove),
-                pieceCaptureMoveRepository.findAllByPartOfChessMove(chessMove)
+                toBePlayedPieceMove,
+                toBeTriggeredPieceMoves,
+                toBeCapturedPieceMoves
         );
 
         ChessGameState chessGameState = chessGame.getChessGameState();
@@ -61,4 +83,54 @@ public class ChessGamePlayMoveService {
         chessGameLegalMoveService.calculateAndSaveLegalMovesForCurrentPlayer(chessGame, chessBoardPiecesModifier.turnIntoObserver(), chessMove);
         return playedChessMoveMapper.fromEntity(chessGame, chessMoveResponse);
     }
+
+    // TODO: The logic for castling should be SIGNIFICANTLY improved! Since it would require a lot of logic changes, this is a temporary solution.
+    private void modifyCastlingAvailabilityIfThisMoveIsToBePlayed(
+            ChessGame chessGame,
+            ChessBoardPiecesObserver chessBoardPiecesObserver,
+            PlayedPieceMove playedPieceMove,
+            List<TriggeredPieceMove> triggeredPieceMoves,
+            List<PieceCaptureMove> pieceCaptureMoves
+    ) {
+        modifyCastlingAvailabilityIfThePieceIsToBeMovedFrom(chessGame, chessBoardPiecesObserver, playedPieceMove.getFrom());
+
+        for (TriggeredPieceMove triggeredPieceMove : triggeredPieceMoves) {
+            modifyCastlingAvailabilityIfThePieceIsToBeMovedFrom(chessGame, chessBoardPiecesObserver, triggeredPieceMove.getFrom());
+        }
+
+        for (PieceCaptureMove pieceCaptureMove : pieceCaptureMoves) {
+            modifyCastlingAvailabilityIfThePieceIsToBeMovedFrom(chessGame, chessBoardPiecesObserver, pieceCaptureMove.getFrom());
+        }
+    }
+
+    private void modifyCastlingAvailabilityIfThePieceIsToBeMovedFrom(ChessGame chessGame, ChessBoardPiecesObserver chessBoardPiecesObserver, ChessCoordinate fromChessCoordinate) {
+        switch (chessBoardPiecesObserver.getChessPieceAt(fromChessCoordinate)) {
+            case WHITE_KING:
+                chessGame.setShortCastlingStillAvailableForWhite(false);
+                chessGame.setLongCastlingStillAvailableForWhite(false);
+                break;
+            case BLACK_KING:
+                chessGame.setShortCastlingStillAvailableForBlack(false);
+                chessGame.setLongCastlingStillAvailableForBlack(false);
+                break;
+            case WHITE_ROOK:
+                if (fromChessCoordinate.equals(getDefaultShortCastlingRookCoordinate(ChessColor.WHITE))) {
+                    chessGame.setShortCastlingStillAvailableForWhite(false);
+                }
+                if (fromChessCoordinate.equals(getDefaultLongCastlingRookCoordinate(ChessColor.WHITE))) {
+                    chessGame.setLongCastlingStillAvailableForWhite(false);
+                }
+                break;
+            case BLACK_ROOK:
+                if (fromChessCoordinate.equals(getDefaultShortCastlingRookCoordinate(ChessColor.BLACK))) {
+                    chessGame.setShortCastlingStillAvailableForBlack(false);
+                }
+                if (fromChessCoordinate.equals(getDefaultLongCastlingRookCoordinate(ChessColor.BLACK))) {
+                    chessGame.setLongCastlingStillAvailableForBlack(false);
+                }
+                break;
+        }
+    }
+
+
 }

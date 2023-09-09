@@ -57,6 +57,10 @@ public class ChessGameLegalMoveService {
                                     LegalMoveCalculatorStateOptions.builder()
                                             .isCurrentPlayerInCheck(isCurrentPlayerInCheck)
                                             .lastPlayedChessMove(lastPlayedChessMove)
+                                            .isShortCastlingStillAvailableForWhite(chessGame.isShortCastlingStillAvailableForWhite())
+                                            .isLongCastlingStillAvailableForWhite(chessGame.isLongCastlingStillAvailableForWhite())
+                                            .isShortCastlingStillAvailableForBlack(chessGame.isShortCastlingStillAvailableForBlack())
+                                            .isLongCastlingStillAvailableForBlack(chessGame.isLongCastlingStillAvailableForBlack())
                                             .build()
                             )
                             .moveCalculatorRequiredOptions(

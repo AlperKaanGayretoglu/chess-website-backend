@@ -6,6 +6,7 @@ public enum ChessMoveType {
 
     NORMAL_PIECE_CAPTURE,
     PAWN_EN_PASSANT_CAPTURE,
-    
-    CASTLING,
+
+    SHORT_CASTLING,
+    LONG_CASTLING,
 }

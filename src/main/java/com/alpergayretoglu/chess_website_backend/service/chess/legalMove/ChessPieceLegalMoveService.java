@@ -41,7 +41,7 @@ public class ChessPieceLegalMoveService {
         chessPieceLegalMoveCalculatorMap.put(ChessPieceType.KNIGHT, ChessPieceLegalMoveService::calculateBasicMovement);
         chessPieceLegalMoveCalculatorMap.put(ChessPieceType.BISHOP, ChessPieceLegalMoveService::calculateBasicMovement);
         chessPieceLegalMoveCalculatorMap.put(ChessPieceType.QUEEN, ChessPieceLegalMoveService::calculateBasicMovement);
-        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.KING, ChessPieceLegalMoveService::calculateLegalMovesForKing);
+        chessPieceLegalMoveCalculatorMap.put(ChessPieceType.KING, KingLegalMoveService::calculateLegalMovesForKing);
     }
 
     public void calculateLegalMovesForPieceAtSquare(LegalMoveCalculatorOptions options) {
@@ -93,7 +93,7 @@ public class ChessPieceLegalMoveService {
         return chessMoveRegisterer.getPlayedPieceMoves().stream().anyMatch(chessMove -> chessMove.getTo().equals(targetCoordinate));
     }
 
-    private static void calculateBasicMovement(LegalMoveCalculatorOptions options) {
+    static void calculateBasicMovement(LegalMoveCalculatorOptions options) {
         ChessBoardPiecesObserver chessBoardPiecesObserver = options.getChessBoardPiecesObserver();
         ChessCoordinate currentCoordinate = options.getForPieceAtCoordinate();
         ChessMoveRegisterer chessMoveRegisterer = options.getChessMoveRegisterer();
@@ -118,7 +118,7 @@ public class ChessPieceLegalMoveService {
         );
     }
 
-    private static boolean afterThisMoveIsPlayedCanTheKingBeTakenByEnemy(ChessBoardPiecesObserver chessBoardPiecesObserver, ChessMoveInfo chessMoveInfo) {
+    static boolean afterThisMoveIsPlayedCanTheKingBeTakenByEnemy(ChessBoardPiecesObserver chessBoardPiecesObserver, ChessMoveInfo chessMoveInfo) {
         ChessColor color = chessBoardPiecesObserver.getChessPieceAt(chessMoveInfo.getPlayedPieceMoveInfo().getPlayedPieceFrom()).getChessColor();
 
         ChessBoardPiecesModifier chessBoardPiecesModifier = chessBoardPiecesObserver.createNewIndependentModifier();
@@ -163,11 +163,6 @@ public class ChessPieceLegalMoveService {
         }
 
         return false;
-    }
-
-    private static void calculateLegalMovesForKing(LegalMoveCalculatorOptions options) {
-        // TODO: Remove this method and implement it separately
-        calculateBasicMovement(options);
     }
 
 }
