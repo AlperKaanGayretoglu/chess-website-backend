@@ -33,6 +33,7 @@ public class ChessGameState extends BaseEntity {
     private boolean isBlackInCheck;
 
     @Builder.Default
+    @Setter
     private ChessGameStatus chessGameStatus = ChessGameStatus.ONGOING;
 
     public User getCurrentPlayer() {
@@ -40,7 +41,7 @@ public class ChessGameState extends BaseEntity {
     }
 
     public boolean hasGameEnded() {
-        return chessGameStatus.isGameEnded();
+        return chessGameStatus.isHasGameEnded();
     }
 
     public List<User> getPlayers() {

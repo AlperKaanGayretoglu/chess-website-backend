@@ -108,6 +108,10 @@ public class ChessGameService {
         ChessGame chessGame = chessGameRepository.findById(gameId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.GAME_NOT_FOUND_WITH_ID(gameId)));
 
+        if (chessGame.getChessGameState().hasGameEnded()) {
+            throw new BusinessException(ErrorCode.CANT_PLAY_MOVE_GAME_HAS_ENDED());
+        }
+
         String chessMoveId = playChessMoveRequest.getChessMoveId();
         ChessMove chessMove = chessMoveRepository.findByChessGameAndId(chessGame, chessMoveId).orElseThrow(
                 () -> new BusinessException(ErrorCode.CHESS_MOVE_NOT_FOUND_WITH_ID(chessMoveId))

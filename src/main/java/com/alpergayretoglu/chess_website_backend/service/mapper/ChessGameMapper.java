@@ -31,6 +31,8 @@ public class ChessGameMapper {
                 )
                 .isWhiteInCheck(game.isWhiteInCheck())
                 .isBlackInCheck(game.isBlackInCheck())
+                .hasGameEnded(game.hasGameEnded())
+                .chessGameStatus(game.getChessGameState().getChessGameStatus())
                 .build();
 
     }

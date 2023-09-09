@@ -15,6 +15,8 @@ public interface ChessMoveRepository extends JpaRepository<ChessMove, String> {
 
     List<ChessMove> findAllByChessGame(ChessGame chessGame);
 
+    boolean existsByChessGame(ChessGame chessGame);
+
     @Transactional
     void deleteAllByChessGame(ChessGame chessGame);
 }

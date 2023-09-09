@@ -57,6 +57,10 @@ public class ErrorCode {
         return new ErrorCode(HttpStatus.CONFLICT, "Illegal move");
     }
 
+    public static ErrorCode CANT_PLAY_MOVE_GAME_HAS_ENDED() {
+        return new ErrorCode(HttpStatus.CONFLICT, "Can't play move, game has ended");
+    }
+
     // ------------------------------------------------ NOT FOUND ------------------------------------------------
     public static ErrorCode USER_NOT_FOUND() {
         return new ErrorCode(HttpStatus.NOT_FOUND, "User not found");

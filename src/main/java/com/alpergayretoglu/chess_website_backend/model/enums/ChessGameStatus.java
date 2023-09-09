@@ -10,21 +10,12 @@ public enum ChessGameStatus {
     WHITE_WON_BY_CHECKMATE(true),
     BLACK_WON_BY_CHECKMATE(true),
 
-    WHITE_WON_BY_RESIGNATION(true),
-    BLACK_WON_BY_RESIGNATION(true),
+    DRAW_BY_STALEMATE(true);
 
-    WHITE_WON_BY_TIMEOUT(true),
-    BLACK_WON_BY_TIMEOUT(true),
-
-    DRAW_BY_THREE_FOLD_REPETITION(true),
-    DRAW_BY_FIFTY_MOVE(true),
-    DRAW_BY_INSUFFICIENT_MATERIAL(true),
-    DRAW_BY_AGREEMENT(true);
-
-    private final boolean isGameEnded;
+    private final boolean hasGameEnded;
 
     ChessGameStatus(boolean hasGameEnded) {
-        this.isGameEnded = hasGameEnded;
+        this.hasGameEnded = hasGameEnded;
     }
 
 }

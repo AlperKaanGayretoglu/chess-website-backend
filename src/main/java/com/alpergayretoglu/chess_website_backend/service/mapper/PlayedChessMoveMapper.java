@@ -29,6 +29,8 @@ public class PlayedChessMoveMapper {
                                 .collect(Collectors.toList())
                 )
                 .isCurrentPlayerInCheck(game.isCurrentPlayerInCheck())
+                .hasGameEnded(game.hasGameEnded())
+                .chessGameStatus(game.getChessGameState().getChessGameStatus())
                 .build();
     }
 

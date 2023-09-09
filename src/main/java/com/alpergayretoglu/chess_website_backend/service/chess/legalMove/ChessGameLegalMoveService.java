@@ -4,6 +4,8 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
+import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
+import com.alpergayretoglu.chess_website_backend.model.enums.ChessGameStatus;
 import com.alpergayretoglu.chess_website_backend.repository.*;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessBoardPiecesObserver;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessMoveRegisterer;
@@ -41,6 +43,7 @@ public class ChessGameLegalMoveService {
 
         ChessMoveRegisterer chessMoveRegisterer = new ChessMoveRegisterer(chessGame);
 
+        ChessColor currentPlayerColor = chessGame.getCurrentPlayerColor();
         boolean isCurrentPlayerInCheck = PlayerInCheckService.isPlayerWithColorInCheck(chessGame.getCurrentPlayerColor(), chessBoardPiecesObserver);
 
         ChessGameState chessGameState = chessGame.getChessGameState();
@@ -80,6 +83,18 @@ public class ChessGameLegalMoveService {
         pieceCaptureMoveRepository.saveAll(chessMoveRegisterer.getPieceCaptureMoves());
 
         chessGameRepository.save(chessGame);
+
+        if (!chessMoveRepository.existsByChessGame(chessGame)) {
+            if (isCurrentPlayerInCheck) {
+                chessGameState.setChessGameStatus(currentPlayerColor == ChessColor.BLACK ?
+                        ChessGameStatus.WHITE_WON_BY_CHECKMATE :
+                        ChessGameStatus.BLACK_WON_BY_CHECKMATE
+                );
+            } else {
+                chessGameState.setChessGameStatus(ChessGameStatus.DRAW_BY_STALEMATE);
+            }
+            chessGameStateRepository.save(chessGameState);
+        }
     }
 
 }

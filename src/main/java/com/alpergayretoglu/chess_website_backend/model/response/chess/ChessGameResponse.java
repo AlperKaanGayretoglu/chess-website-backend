@@ -1,5 +1,6 @@
 package com.alpergayretoglu.chess_website_backend.model.response.chess;
 
+import com.alpergayretoglu.chess_website_backend.model.enums.ChessGameStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,5 +24,8 @@ public class ChessGameResponse {
 
     private final boolean isWhiteInCheck;
     private final boolean isBlackInCheck;
+
+    private final boolean hasGameEnded;
+    private final ChessGameStatus chessGameStatus;
 
 }

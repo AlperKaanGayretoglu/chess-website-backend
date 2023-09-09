@@ -1,5 +1,6 @@
 package com.alpergayretoglu.chess_website_backend.model.response.chess;
 
+import com.alpergayretoglu.chess_website_backend.model.enums.ChessGameStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,8 @@ public class PlayedChessMoveResponse {
     private final List<ChessMoveResponse> legalMovesForCurrentPlayer;
 
     private final boolean isCurrentPlayerInCheck;
+
+    private final boolean hasGameEnded;
+    private final ChessGameStatus chessGameStatus;
 
 }
