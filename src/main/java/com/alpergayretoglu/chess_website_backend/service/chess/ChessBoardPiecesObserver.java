@@ -6,6 +6,7 @@ import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,10 @@ public class ChessBoardPiecesObserver {
         }
 
         return chessCoordinates;
+    }
+
+    public ChessBoardPiecesModifier createNewIndependentModifier() {
+        return new ChessBoardPiecesModifier(new HashMap<>(chessPieces));
     }
 
 }
