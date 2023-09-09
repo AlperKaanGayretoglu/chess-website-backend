@@ -7,6 +7,9 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.repository.*;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessBoardPiecesObserver;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessMoveRegisterer;
+import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.options.LegalMoveCalculatorOptions;
+import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.options.LegalMoveCalculatorStateOptions;
+import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.options.MoveCalculatorRequiredOptions;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
@@ -49,11 +52,21 @@ public class ChessGameLegalMoveService {
 
         for (ChessCoordinate chessCoordinate : chessBoardPiecesObserver.getCoordinatesOfPiecesWithColor(chessGame.getCurrentPlayerColor())) {
             chessPieceLegalMoveService.calculateLegalMovesForPieceAtSquare(
-                    isCurrentPlayerInCheck,
-                    chessBoardPiecesObserver,
-                    chessCoordinate,
-                    chessMoveRegisterer,
-                    lastPlayedChessMove
+                    LegalMoveCalculatorOptions.builder()
+                            .legalMoveCalculatorStateOptions(
+                                    LegalMoveCalculatorStateOptions.builder()
+                                            .isCurrentPlayerInCheck(isCurrentPlayerInCheck)
+                                            .lastPlayedChessMove(lastPlayedChessMove)
+                                            .build()
+                            )
+                            .moveCalculatorRequiredOptions(
+                                    MoveCalculatorRequiredOptions.builder()
+                                            .chessBoardPiecesObserver(chessBoardPiecesObserver)
+                                            .chessMoveRegisterer(chessMoveRegisterer)
+                                            .build()
+                            )
+                            .forPieceAtCoordinate(chessCoordinate)
+                            .build()
             );
         }
 

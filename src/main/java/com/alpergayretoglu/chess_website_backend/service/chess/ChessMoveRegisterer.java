@@ -7,14 +7,13 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.ChessMov
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.PieceCaptureMoveInfo;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.PlayedPieceMoveInfo;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.TriggeredPieceMoveInfo;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
-@AllArgsConstructor
 @Getter
 public class ChessMoveRegisterer {
     private final List<ChessMove> legalMoves = new ArrayList<>();
@@ -24,7 +23,26 @@ public class ChessMoveRegisterer {
 
     private final ChessGame chessGame;
 
+    private Predicate<ChessMoveInfo> filter;
+
+    public ChessMoveRegisterer(ChessGame chessGame) {
+        this.chessGame = chessGame;
+        this.filter = chessMoveInfo -> true;
+    }
+
+    public void addFilter(Predicate<ChessMoveInfo> filter) {
+        this.filter = filter;
+    }
+
+    public void removeFilter() {
+        this.filter = chessMoveInfo -> true;
+    }
+
     public void registerNewChessMove(ChessMoveInfo chessMoveInfo) {
+        if (!filter.test(chessMoveInfo)) {
+            return;
+        }
+
         ChessMove chessMove = ChessMove.builder()
                 .chessGame(chessGame)
                 .chessMoveType(chessMoveInfo.getChessMoveType())

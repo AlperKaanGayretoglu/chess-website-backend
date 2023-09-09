@@ -1,36 +1,27 @@
 package com.alpergayretoglu.chess_website_backend.service.chess.legalMove;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPieceType;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessBoardPiecesObserver;
 import com.alpergayretoglu.chess_website_backend.service.chess.ChessMoveRegisterer;
+import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.options.LegalMoveCalculatorOptions;
+import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.options.LegalMoveCalculatorStateOptions;
+import com.alpergayretoglu.chess_website_backend.service.chess.legalMove.options.MoveCalculatorRequiredOptions;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern.chessPieceBasicMovePatternMap;
 
 @Service
 @NoArgsConstructor
 public class ChessPieceLegalMoveService {
-    @FunctionalInterface
-    private interface ChessPieceLegalMoveCalculator {
-        void calculateLegalMoves(
-                boolean isCurrentPlayerInCheck,
-                ChessBoardPiecesObserver chessBoardPiecesObserver,
-                ChessCoordinate currentCoordinate,
-                ChessMoveRegisterer chessMoveRegisterer,
-                @Nullable ChessMove lastPlayedChessMove
-        );
-    }
-
-    private static final Map<ChessPieceType, ChessPieceLegalMoveCalculator> chessPieceLegalMoveCalculatorMap;
+    private static final Map<ChessPieceType, Consumer<LegalMoveCalculatorOptions>> chessPieceLegalMoveCalculatorMap;
 
     static {
         chessPieceLegalMoveCalculatorMap = new HashMap<>();
@@ -42,37 +33,46 @@ public class ChessPieceLegalMoveService {
         chessPieceLegalMoveCalculatorMap.put(ChessPieceType.KING, ChessPieceLegalMoveService::calculateLegalMovesForKing);
     }
 
-    public void calculateLegalMovesForPieceAtSquare(
-            boolean isCurrentPlayerInCheck,
-            ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessCoordinate currentCoordinate,
-            ChessMoveRegisterer chessMoveRegisterer,
-            @Nullable ChessMove lastPlayedChessMove
-    ) {
-        chessPieceLegalMoveCalculatorMap.get(chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessPieceType())
-                .calculateLegalMoves(isCurrentPlayerInCheck, chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer, lastPlayedChessMove);
+    public void calculateLegalMovesForPieceAtSquare(LegalMoveCalculatorOptions options) {
+        ChessBoardPiecesObserver chessBoardPiecesObserver = options.getChessBoardPiecesObserver();
+        ChessCoordinate currentCoordinate = options.getForPieceAtCoordinate();
+
+        chessPieceLegalMoveCalculatorMap.get(
+                chessBoardPiecesObserver.getChessPieceAt(currentCoordinate).getChessPieceType()
+        ).accept(options);
     }
 
     public static boolean isThisALegalMoveForPiece(
-            boolean isCurrentPlayerInCheck,
+            LegalMoveCalculatorStateOptions legalMoveCalculatorStateOptions,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessCoordinate sourceCoordinate,
-            ChessCoordinate targetCoordinate,
-            @Nullable ChessMove lastPlayedChessMove
+            ChessCoordinate targetCoordinate
     ) {
         ChessMoveRegisterer chessMoveRegisterer = new ChessMoveRegisterer(null);
-        chessPieceLegalMoveCalculatorMap.get(chessBoardPiecesObserver.getChessPieceAt(sourceCoordinate).getChessPieceType())
-                .calculateLegalMoves(isCurrentPlayerInCheck, chessBoardPiecesObserver, sourceCoordinate, chessMoveRegisterer, lastPlayedChessMove);
+
+        LegalMoveCalculatorOptions options = LegalMoveCalculatorOptions.builder()
+                .legalMoveCalculatorStateOptions(legalMoveCalculatorStateOptions)
+                .moveCalculatorRequiredOptions(
+                        MoveCalculatorRequiredOptions.builder()
+                                .chessBoardPiecesObserver(chessBoardPiecesObserver)
+                                .chessMoveRegisterer(chessMoveRegisterer)
+                                .build()
+                )
+                .forPieceAtCoordinate(sourceCoordinate)
+                .build();
+
+        chessPieceLegalMoveCalculatorMap.get(
+                chessBoardPiecesObserver.getChessPieceAt(sourceCoordinate).getChessPieceType()
+        ).accept(options);
+
         return chessMoveRegisterer.getPlayedPieceMoves().stream().anyMatch(chessMove -> chessMove.getTo().equals(targetCoordinate));
     }
 
-    private static void calculateBasicMovement(
-            boolean isCurrentPlayerInCheck,
-            ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessCoordinate currentCoordinate,
-            ChessMoveRegisterer chessMoveRegisterer,
-            @Nullable ChessMove lastPlayedChessMove
-    ) {
+    private static void calculateBasicMovement(LegalMoveCalculatorOptions options) {
+        ChessBoardPiecesObserver chessBoardPiecesObserver = options.getChessBoardPiecesObserver();
+        ChessCoordinate currentCoordinate = options.getForPieceAtCoordinate();
+        ChessMoveRegisterer chessMoveRegisterer = options.getChessMoveRegisterer();
+
         ChessPiece chessPiece = chessBoardPiecesObserver.getChessPieceAt(currentCoordinate);
 
         PiecePattern piecePattern = chessPieceBasicMovePatternMap.get(chessPiece.getChessPieceType());
@@ -93,15 +93,9 @@ public class ChessPieceLegalMoveService {
         );
     }
 
-    private static void calculateLegalMovesForKing(
-            boolean isCurrentPlayerInCheck,
-            ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessCoordinate currentCoordinate,
-            ChessMoveRegisterer chessMoveRegisterer,
-            @Nullable ChessMove lastPlayedChessMove
-    ) {
+    private static void calculateLegalMovesForKing(LegalMoveCalculatorOptions options) {
         // TODO: Remove this method and implement it separately
-        calculateBasicMovement(isCurrentPlayerInCheck, chessBoardPiecesObserver, currentCoordinate, chessMoveRegisterer, lastPlayedChessMove);
+        calculateBasicMovement(options);
     }
 
 }
