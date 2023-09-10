@@ -9,4 +9,7 @@ public enum ChessMoveType {
 
     SHORT_CASTLING,
     LONG_CASTLING,
+
+    PAWN_PROMOTION,
+    PAWN_PROMOTION_WITH_CAPTURE,
 }

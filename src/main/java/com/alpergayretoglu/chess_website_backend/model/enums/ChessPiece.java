@@ -2,6 +2,10 @@ package com.alpergayretoglu.chess_website_backend.model.enums;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 public enum ChessPiece {
 
@@ -26,5 +30,14 @@ public enum ChessPiece {
         this.chessPieceType = chessPieceType;
         this.chessColor = chessColor;
     }
+
+    public static List<ChessPiece> getAllPiecesWithColor(ChessColor chessColor) {
+        return Arrays.stream(ChessPiece.values())
+                .filter(chessPiece -> chessPiece.getChessColor() == chessColor)
+                .collect(Collectors.toList());
+    }
+
+    // make it so that its json representation is an object with two fields: color and type
+
 
 }

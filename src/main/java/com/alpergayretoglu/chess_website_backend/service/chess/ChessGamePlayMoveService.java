@@ -4,10 +4,7 @@ import com.alpergayretoglu.chess_website_backend.entity.chess.ChessBoard;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGame;
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessGameState;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.ChessMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceCaptureMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.*;
 import com.alpergayretoglu.chess_website_backend.exception.BusinessException;
 import com.alpergayretoglu.chess_website_backend.exception.ErrorCode;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
@@ -56,6 +53,7 @@ public class ChessGamePlayMoveService {
         PlayedPieceMove toBePlayedPieceMove = chessMove.getPlayedPieceMove();
         List<TriggeredPieceMove> toBeTriggeredPieceMoves = triggeredPieceMoveRepository.findAllByPartOfChessMove(chessMove);
         List<PieceCaptureMove> toBeCapturedPieceMoves = pieceCaptureMoveRepository.findAllByPartOfChessMove(chessMove);
+        PieceTransformationMove toBePieceTransformationMove = chessMove.getPieceTransformationMove();
 
         modifyCastlingAvailabilityIfThisMoveIsToBePlayed(
                 chessGame,
@@ -71,7 +69,8 @@ public class ChessGamePlayMoveService {
         chessBoardPiecesModifier.playChessMove(
                 toBePlayedPieceMove,
                 toBeTriggeredPieceMoves,
-                toBeCapturedPieceMoves
+                toBeCapturedPieceMoves,
+                toBePieceTransformationMove
         );
 
         ChessGameState chessGameState = chessGame.getChessGameState();

@@ -21,6 +21,8 @@ public class ChessMoveInfo {
     @Builder.Default
     private final List<PieceCaptureMoveInfo> pieceCaptureMoveInfos = new ArrayList<>();
 
+    private final PieceTransformationMoveInfo pieceTransformationMoveInfo;
+
     @NonNull
     private final ChessMoveType chessMoveType;
 

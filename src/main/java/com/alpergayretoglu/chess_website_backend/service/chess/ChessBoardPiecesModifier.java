@@ -2,6 +2,7 @@ package com.alpergayretoglu.chess_website_backend.service.chess;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceCaptureMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceTransformationMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
@@ -31,10 +32,16 @@ public class ChessBoardPiecesModifier {
         chessPieces.put(chessCoordinate, chessPiece);
     }
 
-    public void playChessMove(PlayedPieceMove playedPieceMove, List<TriggeredPieceMove> triggeredPieceMoves, List<PieceCaptureMove> pieceCaptureMoves) {
+    public void playChessMove(
+            PlayedPieceMove playedPieceMove,
+            List<TriggeredPieceMove> triggeredPieceMoves,
+            List<PieceCaptureMove> pieceCaptureMoves,
+            PieceTransformationMove pieceTransformationMove
+    ) {
         playPieceCaptures(pieceCaptureMoves);
         playTriggeredMoves(triggeredPieceMoves);
         playPieceMove(playedPieceMove);
+        playPieceTransformation(pieceTransformationMove);
     }
 
     private void playPieceMove(PlayedPieceMove playedPieceMove) {
@@ -51,6 +58,13 @@ public class ChessBoardPiecesModifier {
 
     private void playPieceCaptures(List<PieceCaptureMove> pieceCaptureMoves) {
         pieceCaptureMoves.forEach(pieceCaptureMove -> removeChessPieceAt(pieceCaptureMove.getFrom()));
+    }
+
+    private void playPieceTransformation(PieceTransformationMove pieceTransformationMove) {
+        if (pieceTransformationMove != null) {
+            removeChessPieceAt(pieceTransformationMove.getAt());
+            putChessPieceTo(pieceTransformationMove.getAt(), pieceTransformationMove.getTransformTo());
+        }
     }
 
     public void clear() {

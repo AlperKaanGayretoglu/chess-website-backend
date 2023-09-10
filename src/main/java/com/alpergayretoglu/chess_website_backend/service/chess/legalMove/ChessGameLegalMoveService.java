@@ -30,6 +30,7 @@ public class ChessGameLegalMoveService {
     private final PlayedPieceMoveRepository playedPieceMoveRepository;
     private final TriggeredPieceMoveRepository triggeredPieceMoveRepository;
     private final PieceCaptureMoveRepository pieceCaptureMoveRepository;
+    private final PieceTransformationMoveRepository pieceTransformationMoveRepository;
 
     private final ChessGameRepository chessGameRepository;
     private final ChessGameStateRepository chessGameStateRepository;
@@ -81,6 +82,7 @@ public class ChessGameLegalMoveService {
         playedPieceMoveRepository.saveAll(chessMoveRegisterer.getPlayedPieceMoves());
         triggeredPieceMoveRepository.saveAll(chessMoveRegisterer.getTriggeredPieceMoves());
         pieceCaptureMoveRepository.saveAll(chessMoveRegisterer.getPieceCaptureMoves());
+        pieceTransformationMoveRepository.saveAll(chessMoveRegisterer.getPieceTransformationMoves());
 
         chessGameRepository.save(chessGame);
 

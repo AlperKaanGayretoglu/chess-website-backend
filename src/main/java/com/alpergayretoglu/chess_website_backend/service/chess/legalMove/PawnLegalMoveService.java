@@ -54,15 +54,17 @@ public class PawnLegalMoveService {
                 oneStepForwardRow,
                 chessBoardPiecesObserver,
                 chessMoveRegisterer,
-                ChessMoveType.NORMAL_PIECE_MOVEMENT
+                ChessMoveType.NORMAL_PIECE_MOVEMENT,
+                pawnColor
         );
-        if (isFirstMoveRegistered && isPawnAtStartingPosition) {
+        if (isPawnAtStartingPosition && isFirstMoveRegistered) {
             registerPawnMove(
                     currentCoordinate,
                     twoStepsForwardRow,
                     chessBoardPiecesObserver,
                     chessMoveRegisterer,
-                    ChessMoveType.PAWN_DOUBLE_MOVEMENT
+                    ChessMoveType.PAWN_DOUBLE_MOVEMENT,
+                    pawnColor
             );
         }
 
@@ -71,7 +73,8 @@ public class PawnLegalMoveService {
                 oneStepForwardRow,
                 rightColumn,
                 chessBoardPiecesObserver,
-                chessMoveRegisterer
+                chessMoveRegisterer,
+                pawnColor
         );
 
         registerPawnCapture(
@@ -79,7 +82,8 @@ public class PawnLegalMoveService {
                 oneStepForwardRow,
                 leftColumn,
                 chessBoardPiecesObserver,
-                chessMoveRegisterer
+                chessMoveRegisterer,
+                pawnColor
         );
 
         registerEnPassantCapture(
@@ -98,7 +102,8 @@ public class PawnLegalMoveService {
             int moveToRow,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
             ChessMoveRegisterer chessMoveRegisterer,
-            ChessMoveType chessMoveType
+            ChessMoveType chessMoveType,
+            ChessColor chessColor
     ) {
         if (!ChessCoordinate.isCoordinateValid(moveToRow, initialCoordinate.getColumn())) {
             return false;
@@ -107,6 +112,11 @@ public class PawnLegalMoveService {
         ChessCoordinate toCoordinate = new ChessCoordinate(moveToRow, initialCoordinate.getColumn());
         if (chessBoardPiecesObserver.getChessPieceAt(toCoordinate) != null) {
             return false;
+        }
+
+        if ((toCoordinate.getRow() == 0 && chessColor == ChessColor.WHITE) || (toCoordinate.getRow() == 7 && chessColor == ChessColor.BLACK)) {
+            chessMoveRegisterer.registerNewPawnPromotionMoveForAllValidPieces(initialCoordinate, toCoordinate, chessColor);
+            return true;
         }
 
         chessMoveRegisterer.registerNewChessMove(
@@ -123,7 +133,8 @@ public class PawnLegalMoveService {
             int moveToRow,
             int moveToColumn,
             ChessBoardPiecesObserver chessBoardPiecesObserver,
-            ChessMoveRegisterer chessMoveRegisterer
+            ChessMoveRegisterer chessMoveRegisterer,
+            ChessColor chessColor
     ) {
         if (!ChessCoordinate.isCoordinateValid(moveToRow, moveToColumn)) {
             return;
@@ -132,6 +143,11 @@ public class PawnLegalMoveService {
         ChessCoordinate toCoordinate = new ChessCoordinate(moveToRow, moveToColumn);
         ChessPiece potentialEnemyPiece = chessBoardPiecesObserver.getChessPieceAt(toCoordinate);
         if (potentialEnemyPiece == null || potentialEnemyPiece.getChessColor() == chessBoardPiecesObserver.getChessPieceAt(initialCoordinate).getChessColor()) {
+            return;
+        }
+
+        if ((toCoordinate.getRow() == 0 && chessColor == ChessColor.WHITE) || (toCoordinate.getRow() == 7 && chessColor == ChessColor.BLACK)) {
+            chessMoveRegisterer.registerNewPawnPromotionMoveForAllValidTypesWithPieceCapture(initialCoordinate, toCoordinate, chessColor);
             return;
         }
 

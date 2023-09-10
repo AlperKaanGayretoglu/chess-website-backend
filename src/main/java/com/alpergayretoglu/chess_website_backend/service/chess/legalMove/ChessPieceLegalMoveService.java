@@ -2,12 +2,10 @@ package com.alpergayretoglu.chess_website_backend.service.chess.legalMove;
 
 import com.alpergayretoglu.chess_website_backend.entity.chess.ChessCoordinate;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceCaptureMove;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.PieceTransformationMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.PlayedPieceMove;
 import com.alpergayretoglu.chess_website_backend.entity.chess.move.TriggeredPieceMove;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.ChessMoveInfo;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.PieceCaptureMoveInfo;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.PlayedPieceMoveInfo;
-import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.TriggeredPieceMoveInfo;
+import com.alpergayretoglu.chess_website_backend.entity.chess.move.info.*;
 import com.alpergayretoglu.chess_website_backend.entity.chess.pattern.PiecePattern;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessPiece;
@@ -137,7 +135,11 @@ public class ChessPieceLegalMoveService {
                 .map(pieceCaptureMoveInfo -> new PieceCaptureMove(null, pieceCaptureMoveInfo.getPieceCaptureFrom()))
                 .collect(Collectors.toList());
 
-        chessBoardPiecesModifier.playChessMove(playedPieceMove, triggeredPieceMoves, pieceCaptureMoves);
+        PieceTransformationMoveInfo pieceTransformationMoveInfo = chessMoveInfo.getPieceTransformationMoveInfo();
+        PieceTransformationMove pieceTransformationMove = pieceTransformationMoveInfo == null ? null :
+                new PieceTransformationMove(null, pieceTransformationMoveInfo.getAt(), pieceTransformationMoveInfo.getTransformTo());
+
+        chessBoardPiecesModifier.playChessMove(playedPieceMove, triggeredPieceMoves, pieceCaptureMoves, pieceTransformationMove);
 
         ChessBoardPiecesObserver chessBoardPiecesObserverAfterMove = chessBoardPiecesModifier.turnIntoObserver();
 

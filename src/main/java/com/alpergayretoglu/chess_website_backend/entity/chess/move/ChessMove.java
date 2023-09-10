@@ -30,6 +30,9 @@ public class ChessMove extends BaseEntity {
     @Builder.Default
     private List<PieceCaptureMove> pieceCaptureMoves = new ArrayList<>();
 
+    @OneToOne(mappedBy = "partOfChessMove", cascade = CascadeType.ALL)
+    private PieceTransformationMove pieceTransformationMove;
+
     private ChessMoveType chessMoveType;
 
 }

@@ -17,6 +17,7 @@ public class ChessMoveResponse {
     private PieceMoveResponse playedPieceMove;
     private List<PieceMoveResponse> triggeredPieceMoves;
     private List<PieceCaptureMoveResponse> pieceCaptureMoves;
+    private PieceTransformationMoveResponse pieceTransformationMove;
 
     private ChessMoveType moveType;
 
