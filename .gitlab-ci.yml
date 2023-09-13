@@ -55,23 +55,22 @@ Build:
     - docker tag $CI_REGISTRY_IMAGE:$CI_IMAGE_TAG $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:$CI_IMAGE_TAG
 
-# Deploy Dev:
-#   stage: deploy
-#   image: debian:10-slim
-#   only:
-#     - master
-#   before_script:
-#     - apt update
-#     - apt install --no-install-recommends -y openssh-client gettext-base
-#     - eval $(ssh-agent -s)
-#     - echo "$SSH_IDENTITY" | tr -d '\r' | ssh-add -
-#     - mkdir -p ~/.ssh
-#     - chmod 700 ~/.ssh
-#     - ssh-keyscan "$EC2_PUBLIC_IP" >> ~/.ssh/known_hosts
-#     - chmod 644 ~/.ssh/known_hosts
-#   script:
-#     - mkdir chess_website_backend
-#     - envsubst < .dev/docker-compose.template.yml > chess_website_backend/docker-compose.yml
-#     - scp -r chess_website_backend ec2-user@"$EC2_PUBLIC_IP":/home/ec2-user/containers/
-#     - ssh ec2-user@"$EC2_PUBLIC_IP" "cd /home/ec2-user/containers/chess_website_backend && docker-compose up -d"
-
+Deploy Dev:
+  stage: deploy
+  image: debian:10-slim
+  only:
+    - master
+  before_script:
+    - apt update
+    - apt install --no-install-recommends -y openssh-client gettext-base
+    - eval $(ssh-agent -s)
+    - echo "$SSH_IDENTITY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan "$EC2_PUBLIC_IP" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - mkdir chess_website_backend
+    - envsubst < .dev/docker-compose.template.yml > chess_website_backend/docker-compose.yml
+    - scp -r chess_website_backend ec2-user@"$EC2_PUBLIC_IP":/home/ec2-user/containers/
+    - ssh ec2-user@"$EC2_PUBLIC_IP" "cd /home/ec2-user/containers/chess_website_backend && docker-compose up -d"
