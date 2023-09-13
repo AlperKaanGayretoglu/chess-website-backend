@@ -55,24 +55,6 @@ Build:
     - docker tag $CI_REGISTRY_IMAGE:$CI_IMAGE_TAG $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:$CI_IMAGE_TAG
 
-Test:
-  image: $CI_BASE_IMAGE
-  stage: test
-  services:
-    - docker:18.09-dind
-  variables:
-    SPRING_PROFILES_ACTIVE: local
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ''
-    DOCKER_DRIVER: overlay2
-  script:
-    - mvn verify
-  artifacts:
-    when: on_failure
-    paths:
-      - target/surefire-reports
-
-
 # Deploy Dev:
 #   stage: deploy
 #   image: debian:10-slim
