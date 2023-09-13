@@ -10,5 +10,6 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_ISSUER=${JWT_ISSUER}
       - JWT_EXPIRATION_HOURS=${JWT_EXPIRATION_HOURS}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
     restart: always
     network_mode: "host"
