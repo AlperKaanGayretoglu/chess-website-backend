@@ -4,6 +4,7 @@ import com.alpergayretoglu.chess_website_backend.entity.BaseEntity;
 import com.alpergayretoglu.chess_website_backend.entity.User;
 import com.alpergayretoglu.chess_website_backend.model.enums.ChessColor;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
@@ -62,6 +63,11 @@ public class ChessGame extends BaseEntity {
 
     public User getPlayerBlack() {
         return chessGameState.getPlayerBlack();
+    }
+
+    @Nullable
+    public User getWinner() {
+        return chessGameState.getWinner();
     }
 
 }

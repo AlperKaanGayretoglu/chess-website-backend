@@ -92,6 +92,10 @@ public class ChessGameLegalMoveService {
                         ChessGameStatus.WHITE_WON_BY_CHECKMATE :
                         ChessGameStatus.BLACK_WON_BY_CHECKMATE
                 );
+                chessGameState.setWinner(currentPlayerColor == ChessColor.BLACK ?
+                        chessGameState.getPlayerWhite() :
+                        chessGameState.getPlayerBlack()
+                );
             } else {
                 chessGameState.setChessGameStatus(ChessGameStatus.DRAW_BY_STALEMATE);
             }

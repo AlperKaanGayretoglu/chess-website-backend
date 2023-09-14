@@ -36,6 +36,10 @@ public class ChessGameState extends BaseEntity {
     @Setter
     private ChessGameStatus chessGameStatus = ChessGameStatus.ONGOING;
 
+    @ManyToOne
+    @Setter
+    private User winner;
+
     public User getCurrentPlayer() {
         return currentPlayerColor == ChessColor.WHITE ? playerWhite : playerBlack;
     }

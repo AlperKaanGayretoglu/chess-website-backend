@@ -25,4 +25,5 @@ public class PlayedChessMoveResponse {
     private final boolean hasGameEnded;
     private final ChessGameStatus chessGameStatus;
 
+    private final String winnerUsername;
 }

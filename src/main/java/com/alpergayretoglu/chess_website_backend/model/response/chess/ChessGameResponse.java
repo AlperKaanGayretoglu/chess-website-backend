@@ -28,4 +28,6 @@ public class ChessGameResponse {
     private final boolean hasGameEnded;
     private final ChessGameStatus chessGameStatus;
 
+    private final String winnerUsername;
+
 }

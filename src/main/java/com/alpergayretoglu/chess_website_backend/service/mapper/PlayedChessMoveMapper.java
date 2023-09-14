@@ -31,6 +31,7 @@ public class PlayedChessMoveMapper {
                 .isCurrentPlayerInCheck(game.isCurrentPlayerInCheck())
                 .hasGameEnded(game.hasGameEnded())
                 .chessGameStatus(game.getChessGameState().getChessGameStatus())
+                .winnerUsername(game.getWinner() != null ? game.getWinner().getUsername() : null)
                 .build();
     }
 

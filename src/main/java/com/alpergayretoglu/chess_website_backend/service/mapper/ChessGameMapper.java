@@ -33,6 +33,7 @@ public class ChessGameMapper {
                 .isBlackInCheck(game.isBlackInCheck())
                 .hasGameEnded(game.hasGameEnded())
                 .chessGameStatus(game.getChessGameState().getChessGameStatus())
+                .winnerUsername(game.getWinner() != null ? game.getWinner().getUsername() : null)
                 .build();
 
     }
